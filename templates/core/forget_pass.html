@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In | AutoCare Pro{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatIcon {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-5px); }
+    }
+
+    .su-input {
+        width: 100%;
+        padding: 0.72rem 1rem 0.72rem 2.6rem;
+        border: 1.5px solid var(--border);
+        border-radius: 11px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: var(--text-heading);
+        background: var(--bg-main);
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .su-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: #fff;
+    }
+
+    .su-input::placeholder {
+        color: #b0bac5;
+        font-size: 0.85rem;
+    }
+
+    .su-field-wrap {
+        position: relative;
+        margin-bottom: 1.1rem;
+    }
+
+    .su-field-icon {
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        pointer-events: none;
+        transition: color 0.2s;
+    }
+
+    .su-field-wrap:focus-within .su-field-icon {
+        color: var(--accent);
+    }
+
+    .su-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text-muted);
+        margin-bottom: 0.4rem;
+    }
+
+    .su-btn {
+        width: 100%;
+        padding: 0.88rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.28);
+        transition: transform 0.18s, box-shadow 0.18s;
+        margin-top: 0.5rem;
+    }
+
+    .su-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(37, 99, 235, 0.38);
+    }
+
+    .su-alert-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        padding: 0.85rem 1rem;
+        border-radius: 11px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: var(--accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+    .su-divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 1.4rem 0 1.1rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+    }
+
+    .su-divider::before,
+    .su-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+</style>
+
+<div style="max-width: 480px; margin: 3rem auto; animation: fadeSlideUp 0.45s ease both;">
+
+    <!-- Card -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); overflow: hidden;">
+
+        <!-- Top accent bar -->
+        <div style="height: 4px; background: linear-gradient(90deg, var(--accent), #60a5fa);"></div>
+
+        <div style="padding: 2.25rem 2rem 2rem;">
+
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 62px; height: 62px; border-radius: 18px; background: #eff6ff; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: floatIcon 3s ease-in-out infinite;">
+                    <i class="fas fa-lock" style="font-size: 1.5rem; color: var(--accent);"></i>
+                </div>
+                <h1 style="font-size: 1.45rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.4px; margin: 0 0 0.3rem;">Welcome Back</h1>
+                <p style="color: var(--text-muted); font-size: 0.87rem; margin: 0;">Sign in to your AutoCare Pro account.</p>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            {% for message in messages %}
+            <div class="su-alert-info">
+                <i class="fas fa-info-circle" style="font-size: 0.85rem; margin-top: 0.15rem; flex-shrink: 0;"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Form -->
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div>
+                    <label class="su-label" for="id_username">
+                        <i class="fas fa-user" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                        Username
+                    </label>
+                    <div class="su-field-wrap">
+                        <i class="su-field-icon fas fa-user"></i>
+                        <input type="text" name="username" id="id_username" class="su-input"
+                               placeholder="Enter your username" required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <label class="su-label" for="id_password" style="margin-bottom: 0;">
+                            <i class="fas fa-lock" style="color: var(--success); margin-right: 0.3rem;"></i>
+                            Password
+                        </label>
+                        <a href="{% url 'forget-password' %}" style="font-size: 0.75rem; color: var(--accent); text-decoration: none; font-weight: 600;">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <div class="su-field-wrap">
+                        <i class="su-field-icon fas fa-lock"></i>
+                        <input type="password" name="password" id="id_password" class="su-input"
+                               placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="su-btn">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Sign In to Dashboard
+                </button>
+            </form>
+
+            <!-- Sign up link -->
+            <div class="su-divider">new to AutoCare Pro?</div>
+
+            <a href="{% url 'signup' %}"
+               style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.78rem; font-size: 0.88rem; font-weight: 700; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; box-sizing: border-box; transition: border-color 0.18s, color 0.18s;"
+               onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+               onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+                <i class="fas fa-user-plus"></i> Create an Account
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Footer note -->
+    <p style="text-align: center; font-size: 0.76rem; color: var(--text-muted); margin-top: 1.25rem;">
+        Protected by AutoCare Pro &nbsp;·&nbsp;
+        <a href="#" style="color: var(--accent); text-decoration: none; font-weight: 600;">Privacy Policy</a>
+    </p>
+</div>
+
+{% endblock %}

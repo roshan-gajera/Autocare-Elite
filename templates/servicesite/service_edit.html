@@ -1,0 +1,64 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content { animation:fadeIn .42s ease; }
+</style>
+
+<div class="page-content">
+<div class="edit-card">
+
+    <div style="margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <a href="{% url 'servicesite-profile' %}" style="color:var(--text-3);font-size:12px;transition:color .2s;" onmouseover="this.style.color='var(--coral)'" onmouseout="this.style.color='var(--text-3)'">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            <span style="color:var(--border);">/</span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;">Edit Service</span>
+        </div>
+        <div class="edit-title" style="margin-bottom:4px;">
+            <i class="fas {{ service.icon_class }}"></i> Edit Service
+        </div>
+        <p style="font-size:13px;color:var(--text-3);">Update the details for this service listing.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label><i class="fas fa-tag"></i> {{ form.title.label }}</label>
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-indian-rupee-sign"></i> Starting Price (₹)</label>
+            {{ form.price_starts_at }}
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Description</label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label><i class="fab fa-font-awesome"></i> Icon Class</label>
+            {{ form.icon_class }}
+        </div>
+
+        <div class="checkbox-group">
+            {{ form.is_active }}
+            <label for="{{ form.is_active.id_for_label }}">
+                <i class="fas fa-circle-check" style="color:var(--green);margin-right:6px;"></i>
+                Service is active
+            </label>
+        </div>
+
+        <div class="btn-row">
+            <a href="{% url 'servicesite-profile' %}" class="btn btn-secondary">
+                <i class="fas fa-xmark"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-floppy-disk"></i> Update Service
+            </button>
+        </div>
+    </form>
+
+</div>
+</div>
+{% endblock %}

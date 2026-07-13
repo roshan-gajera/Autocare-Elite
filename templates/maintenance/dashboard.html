@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | AutoCare Pro{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<style>
+    .badge-processing { background: #dbeafe; color: #1e40af; }
+    .badge-confirmed  { background: #f3e8ff; color: #6f42c1; }
+    
+</style>
+<!-- ══════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════ -->
+<div class="page-header fade-up">
+    <div>
+        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
+            <span class="live-badge"><span class="live-dot"></span> Live</span>
+        </div>
+        <h1>Fleet Performance Overview</h1>
+        <p>Real-time monitoring of your registered vehicles and maintenance cycles.</p>
+    </div>
+    
+</div>
+
+<!-- ══════════════════════════════════
+     STAT CARDS
+══════════════════════════════════ -->
+<div class="stat-cards">
+    <div class="stat-card fade-up">
+        <div class="stat-icon blue"><i class="fas fa-car-side"></i></div>
+        <div>
+            <div class="stat-label">Total Order</div>
+            <div class="stat-value">{{services.total_order}}</div>
+        </div>
+    </div>
+    <div class="stat-card fade-up">
+        <div class="stat-icon orange"><i class="fas fa-wrench"></i></div>
+        <div>
+            <div class="stat-label">Service Requests</div>
+            <div class="stat-value">{{ services.total_service_order|default:"0" }}</div>
+            <div class="stat-sub">{{ services.active_service_order|default:"0" }} active</div>
+        </div>
+    </div>
+    <div class="stat-card fade-up">
+        <div class="stat-icon purple"><i class="fas fa-truck-pickup"></i></div>
+        <div>
+            <div class="stat-label">Tow Requests</div>
+            <div class="stat-value">{{ services.total_towing_order|default:"0" }}</div>
+            <div class="stat-sub">{{ services.active_towing_order|default:"0" }} active</div>
+        </div>
+    </div>
+
+    <div class="stat-card fade-up">
+        <div class="stat-icon red"><i class="fas fa-envelope"></i></div>
+        <div>
+            <div class="stat-label">Messages</div>
+            <div class="stat-value">{{ services.message_unread|default:"0" }}</div>
+            <div class="stat-sub">unread</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     TWO COLUMN GRID
+══════════════════════════════════ -->
+<div class="dash-grid">
+
+    <!-- Recent Service Orders -->
+    <div class="panel fade-up">
+        <div class="panel-header">
+            <span class="panel-title"><i class="fas fa-tools"></i> Recent Service Orders</span>
+            <a href="{% url 'service-order' %}" class="btn btn-outline"
+                style="padding:0.4rem 0.85rem; font-size:0.8rem;">View All</a>
+        </div>
+        <div class="panel-body" style="padding-top:0.4rem;">
+            {% for order in services.service_order %}
+            <div class="order-row">
+                <div class="activity-icon blue"
+                    style="border-radius:10px; background:#eff6ff; color:var(--accent); width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0;">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="order-info">
+                    <div class="order-name">{{ order.customer_name|upper }} </div>
+                    <div class="order-sub">{{ order.vehicle_info }}</div>
+                </div>
+                <span class="badge badge-{{ order.status|default:'pending' }}">
+                    {{ order.status|default:"Pending" }}
+                </span>
+            </div>
+            {% empty %}
+            <div class="empty-state" style="padding:2rem;">
+                <i class="fas fa-clipboard-list"></i>
+                <p>No service orders yet.</p>
+                <a href="{% url 'portal_service_list' %}" class="btn btn-primary"
+                    style="font-size:0.82rem; padding:0.55rem 1.1rem;">Book a Service</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Towing Orders -->
+    <div class="panel fade-up">
+        <div class="panel-header">
+            <span class="panel-title"><i class="fas fa-truck-pickup" style="color:#7c3aed;"></i> Recent Tow
+                Requests</span>
+            <a href="{% url 'towing-order' %}" class="btn btn-outline"
+                style="padding:0.4rem 0.85rem; font-size:0.8rem;">View All</a>
+        </div>
+        <div class="panel-body" style="padding-top:0.4rem;">
+            {% for towing in services.towing_order %}
+            <div class="order-row">
+                <div
+                    style="width:36px; height:36px; border-radius:10px; background:#f5f3ff; color:#7c3aed; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0;">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="order-info">
+                    <div class="order-name">{{ towing.full_name|upper|default:"N/A" }}</div>
+                    <div class="order-sub">{{ towing.pickup_address|default:"—" }}</div>
+                </div>
+                <span class="badge badge-{{ towing.status|default:'pending' }}">
+                    {{ towing.status|default:"Pending" }}
+                </span>
+            </div>
+            {% empty %}
+            <div class="empty-state" style="padding:2rem;">
+                <i class="fas fa-truck"></i>
+                <p>No towing requests yet.</p>
+                <a href="{% url 'towing_request' %}" class="btn btn-primary"
+                    style="font-size:0.82rem; padding:0.55rem 1.1rem;">Request Tow</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- ══════════════════════════════════
+     QUICK ACTIONS
+══════════════════════════════════ -->
+<div class="quick-actions fade-up">
+    <a href="{% url 'blog_list' %}" class="quick-action-card">
+        <div class="quick-action-icon" style="background:#eff6ff; color:var(--accent);"><i class="fas fa-pen"></i></div>
+        <span class="quick-action-label">Create Blog</span>
+    </a>
+    <a href="{% url 'portal_service_list' %}" class="quick-action-card">
+        <div class="quick-action-icon" style="background:#fff7ed; color:var(--warning);"><i class="fas fa-tools"></i>
+        </div>
+        <span class="quick-action-label">Book Service</span>
+    </a>
+    <a href="{% url 'towing_request' %}" class="quick-action-card">
+        <div class="quick-action-icon" style="background:#f5f3ff; color:#7c3aed;"><i class="fas fa-truck-pickup"></i>
+        </div>
+        <span class="quick-action-label">Request Tow</span>
+    </a>
+    <a href="{% url 'contact_us' %}" class="quick-action-card">
+        <div class="quick-action-icon" style="background:#fff1f2; color:var(--danger);"><i class="fas fa-envelope"></i>
+        </div>
+        <span class="quick-action-label">Contact Us</span>
+    </a>
+
+</div>
+
+
+{% endblock %}

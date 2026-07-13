@@ -1,0 +1,246 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content {
+        animation: fadeIn .42s ease;
+    }
+
+    .order-edit-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        max-width: 840px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .order-edit-header {
+        background: var(--bg-raised);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .order-edit-header h2 {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-1);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .order-edit-header h2 i {
+        color: var(--coral);
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-3);
+    }
+
+    .breadcrumb a {
+        color: var(--text-3);
+        transition: color .2s;
+    }
+
+    .breadcrumb a:hover {
+        color: var(--coral);
+    }
+
+    .breadcrumb i {
+        font-size: 9px;
+    }
+
+    .order-edit-body {
+        padding: 26px 30px;
+    }
+
+    .edit-section {
+        margin-bottom: 22px;
+    }
+
+    .edit-section-label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .edit-section-label i {
+        color: var(--coral);
+        font-size: 11px;
+    }
+
+    .edit-section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    .edit-fields-grid-1 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .edit-fields-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .edit-fields-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    .edit-col-2 {
+        grid-column: span 2;
+    }
+
+    .edit-col-3 {
+        grid-column: span 3;
+    }
+
+    .efgroup label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-2);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .efgroup label i {
+        margin-right: 5px;
+        color: var(--coral);
+    }
+
+    .order-edit-footer {
+        border-radius: var(--radius-lg);
+        padding: 16px 30px 22px;
+        border: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        background: var(--bg-raised);
+    }
+
+    @media (max-width:680px) {
+        .order-edit-body {
+            padding: 18px;
+        }
+
+        .order-edit-footer {
+            padding: 14px 18px 18px;
+        }
+
+        .edit-fields-grid-2,
+        .edit-fields-grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-col-2,
+        .edit-col-3 {
+            grid-column: span 1;
+        }
+    }
+</style>
+
+<div class="page-content">
+    <div class="order-edit-card">
+
+        <!-- Header -->
+        <div class="order-edit-header">
+            <h2><i class="fas fa-pen-to-square"></i> Edit Message</h2>
+            <div class="breadcrumb">
+                <a href="{% url 'servicesite-towingorder' %}">Message</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Edit</span>
+            </div>
+        </div>
+
+        <div class="order-edit-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Customer Info -->
+                <div class="edit-section">
+                    <div class="edit-section-label"><i class="fas fa-user"></i> Customer Information</div>
+                    <div class="edit-fields-grid-3">
+                        <div class="efgroup">
+                            <label><i class="fas fa-user"></i> {{ form.name.label }}</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="efgroup">
+                            <label><i class="fas fa-envelope"></i> {{ form.email.label }}</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="efgroup">
+                            <label><i class="fas fa-message"></i> {{ form.subject.label }}</label>
+                            {{ form.subject}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule & Payment -->
+                <div class="edit-section">
+                    <div class="edit-section-label"><i class="fas fa-message"></i>Message Info</div>
+                    <div class="edit-fields-grid-1">
+                        <div class="efgroup">
+                            <label><i class="fas fa-comment"></i> {{ form.message.label }}</label>
+                            {{ form.message }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Toggles -->
+                <div class="edit-section">
+                    <div class="edit-section-label"><i class="fas fa-toggle-on"></i> Status </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                        <div class="checkbox-group">
+                            {{ form.is_read }}
+                            <label for="{{ form.is_read.id_for_label }}">
+                                <i class="fas fa-circle-check" style="color:var(--green);margin-right:5px;"></i>
+                                 Message Read
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-edit-footer">
+                    <a href="{% url 'servicesite-message' %}" class="btn btn-secondary">
+                        <i class="fas fa-xmark"></i> Cancel
+                    </a>
+                    <button form="order-edit-form" type="submit" class="btn btn-primary"
+                        onclick="this.closest('.order-edit-body').querySelector('form').submit()">
+                        <i class="fas fa-floppy-disk"></i> Update Message
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+
+
+
+    </div>
+</div>
+{% endblock %}

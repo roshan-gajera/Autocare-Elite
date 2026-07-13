@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Emergency Towing | AutoCare Elite{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<style>
+    .towing-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        border-radius: 24px;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: -4rem;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .pulse-dot {
+        height: 12px;
+        width: 12px;
+        background-color: #ef4444;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .glass-form-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 10;
+        margin-top: 2rem;
+    }
+
+    .map-container {
+        border-radius: 24px;
+        overflow: hidden;
+        border: 4px solid white;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .map-container:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn-tow {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+        font-size: 1.25rem;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-tow:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(239, 68, 68, 0.4), 0 10px 10px -5px rgba(239, 68, 68, 0.2);
+    }
+    
+    .premium-input {
+        background: #f8fafc;
+        border: 2px solid transparent;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        color: #0f172a;
+    }
+    
+    .premium-input:focus {
+        background: white;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+</style>
+
+<div class="animate-fade">
+    <div class="towing-hero">
+        <span style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
+            <span class="pulse-dot"></span> 24/7 Emergency Dispatch
+        </span>
+        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px;">Immediate Roadside Recovery</h1>
+        <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;">Select your vehicle's location on the interactive map below. Our nearest heavy-duty recovery unit will be routed to you instantly.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; position: relative; z-index: 10; padding: 0 1rem;">
+        
+        <!-- Premium Interactive Map -->
+        <div style="margin-top: 2rem;">
+            <div class="map-container" style="height: 650px; position: relative; background: #e2e8f0;">
+                <div id="map" style="width: 100%; height: 100%; z-index: 1;"></div>
+                <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem 1.5rem; border-radius: 9999px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 0.75rem; white-space: nowrap;">
+                    <i class="fas fa-crosshairs fa-spin" style="color: #ef4444;"></i>
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #0f172a;">Tap map to pin exact location</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Booking Form -->
+        <div class="glass-form-card">
+            <h2 style="font-size: 1.75rem; color: #0f172a; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fas fa-clipboard-list" style="color: #3b82f6;"></i> Dispatch Details
+            </h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label style="color: #475569; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Contact Name</label>
+                    <input type="text" name="{{ form.full_name.html_name }}" class="premium-input w-100" style="width: 100%;" placeholder="e.g. John Doe" required>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label style="color: #475569; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Emergency Phone</label>
+                    <input type="tel" name="{{ form.phone_number.html_name }}" class="premium-input w-100" style="width: 100%;" placeholder="Mobile number to reach you" required>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label style="color: #475569; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Vehicle Profile</label>
+                    <input type="text" name="{{ form.vehicle_details.html_name }}" class="premium-input w-100" style="width: 100%;" placeholder="Make, Model, Color (e.g. Red Toyota Camry)" required>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label style="color: #475569; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">GPS Location</label>
+                    <input type="text" name="{{ form.pickup_address.html_name }}" id="address-input" class="premium-input w-100" style="width: 100%; background: #f1f5f9; cursor: not-allowed;" placeholder="Pin location on map" readonly required>
+                </div>
+                
+                <!-- Hidden Coordinates -->
+                <input type="hidden" name="{{ form.latitude.html_name }}" id="id_latitude">
+                <input type="hidden" name="{{ form.longitude.html_name }}" id="id_longitude">
+
+                <button type="submit" class="btn-tow" style="width: 100%; margin-top: 1.5rem;">
+                    <i class="fas fa-bolt" style="margin-right: 0.5rem;"></i> Request Immediate Tow
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding: 1.25rem; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    <div style="background: #e0e7ff; color: #4f46e5; padding: 0.5rem; border-radius: 8px;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 0.9rem; color: #1e1b4b; margin-bottom: 0.25rem;">Secure Verification Protocol</h4>
+                        <p style="font-size: 0.8rem; color: #475569; margin: 0; line-height: 1.4;">You will receive a secure OTP upon request. Only provide this code to the driver once your vehicle is safely recovered.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize standard map
+    var map = L.map('map', {zoomControl: false}).setView([20.5937, 78.9629], 5); // Default to India view
+
+    // Add zoom control to bottom right
+    L.control.zoom({
+        position: 'bottomright'
+    }).addTo(map);
+
+    // Premium map tile style
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    var marker;
+
+    // Custom sleek icon
+    var towIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // Try to get user's current location
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            map.flyTo([lat, lng], 16, {
+                animate: true,
+                duration: 2
+            });
+            setMarker(lat, lng);
+        }, function() {
+            // Geolocation failed or denied
+            console.log("Geolocation denied. User must click on map.");
+        });
+    }
+
+    function setMarker(lat, lng) {
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { draggable: true, icon: towIcon }).addTo(map);
+            marker.on('dragend', function (e) {
+                var pos = marker.getLatLng();
+                updateForm(pos.lat, pos.lng);
+            });
+        }
+        updateForm(lat, lng);
+    }
+
+    function updateForm(lat, lng) {
+        document.getElementById('id_latitude').value = lat.toFixed(6);
+        document.getElementById('id_longitude').value = lng.toFixed(6);
+
+        // Reverse geocoding (OpenStreetMap Nominatim)
+        document.getElementById('address-input').value = "Locating...";
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.display_name) {
+                    document.getElementById('address-input').value = data.display_name;
+                } else {
+                    document.getElementById('address-input').value = `${lat.toFixed(4)}, ${lng.toFixed(4)} (Custom Pin)`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('address-input').value = `${lat.toFixed(4)}, ${lng.toFixed(4)} (Custom Pin)`;
+            });
+    }
+
+    map.on('click', function (e) {
+        map.flyTo(e.latlng, map.getZoom() > 14 ? map.getZoom() : 16, { animate: true, duration: 1 });
+        setMarker(e.latlng.lat, e.latlng.lng);
+    });
+</script>
+{% endblock %}

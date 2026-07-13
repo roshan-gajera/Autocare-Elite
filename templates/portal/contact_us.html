@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin-bottom: 0.3rem;">Contact Us</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">We're here to help. Reach out anytime.</p>
+</div>
+
+<!-- Two-column layout -->
+<div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.75rem; align-items: start;">
+
+    <!-- LEFT: Info panel -->
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+
+        <!-- Intro card -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 1.6rem;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: #eff6ff; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <i class="fas fa-headset" style="color: var(--accent); font-size: 1.1rem;"></i>
+            </div>
+            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-heading); margin-bottom: 0.6rem;">Get In Touch</h2>
+            <p style="color: var(--text-muted); font-size: 0.87rem; line-height: 1.65;">
+                Have questions about our service tracking or need to book a professional maintenance session?
+                Our team is here to help.
+            </p>
+        </div>
+
+        <!-- Contact info cards -->
+
+        {% if services.select_info %}
+        <!-- Location -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 1rem; transition: box-shadow 0.2s, transform 0.2s;"
+             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'"
+             onmouseout="this.style.transform='none'; this.style.boxShadow='var(--shadow)'">
+            <div style="width: 42px; height: 42px; border-radius: 11px; background: #fff1f2; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-map-marker-alt" style="color: var(--danger); font-size: 1rem;"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.15rem;">Location</p>
+                <p style="font-size: 0.9rem; font-weight: 600; color: var(--text-heading);">{{services.select_info.shop_address}}</p>
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 1rem; transition: box-shadow 0.2s, transform 0.2s;"
+             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'"
+             onmouseout="this.style.transform='none'; this.style.boxShadow='var(--shadow)'">
+            <div style="width: 42px; height: 42px; border-radius: 11px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-phone" style="color: var(--success); font-size: 1rem;"></i>
+            </div>
+            <div>
+                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.15rem;">Phone</p>
+                <p style="font-size: 0.9rem; font-weight: 600; color: var(--text-heading);">+91 {{services.select_info.phone_number}}</p>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 1.1rem 1.3rem; display: flex; align-items: center; gap: 1rem; transition: box-shadow 0.2s, transform 0.2s;"
+             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'"
+             onmouseout="this.style.transform='none'; this.style.boxShadow='var(--shadow)'">
+            <div style="width: 42px; height: 42px; border-radius: 11px; background: #fff7ed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-envelope" style="color: var(--warning); font-size: 1rem;"></i>
+            </div>
+            <div style="min-width: 0;">
+                <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.15rem;">Email</p>
+                <p style="font-size: 0.88rem; font-weight: 600; color: var(--text-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{services.select_info.user.email}}</p>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- RIGHT: Contact form -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 2rem;">
+
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.75rem;">
+            <div style="width: 4px; height: 22px; background: var(--accent); border-radius: 4px;"></div>
+            <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--text-heading);">Send a Message</h2>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Name + Email row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.45rem;">Name</label>
+                    {{ services.form.name }}
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.45rem;">Email</label>
+                    {{ services.form.email }}
+                </div>
+            </div>
+
+            <!-- Subject -->
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.45rem;">Subject</label>
+                {{ services.form.subject }}
+            </div>
+
+            <!-- Message -->
+            <div style="margin-bottom: 1.6rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.45rem;">Message</label>
+                {{ services.form.message }}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

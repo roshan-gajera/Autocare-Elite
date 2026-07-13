@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+
+{% block title %}Towing Request Details | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+     .badge-pending    { background: #fef3c7; color: #92400e; }
+    .badge-processing   { background: #dbeafe; color: #1e40af; }
+    .badge-completed  { background: #dcfce7; color: #166534; }
+    .badge-cancelled  { background: #fee2e2; color: #991b1b; }
+    .badge-confirmed {
+            background: #f3e8ff;
+            color: #6f42c1;
+    }
+
+
+    .bd-section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .bd-info-box {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+
+    .bd-info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.87rem;
+        color: var(--text-body);
+    }
+
+    .bd-info-row strong {
+        color: var(--text-heading);
+        font-weight: 600;
+        min-width: 58px;
+    }
+
+    .bd-side-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 1.2rem 1.3rem;
+        animation: fadeSlideUp 0.4s ease both;
+    }
+
+    .bd-side-card + .bd-side-card {
+        margin-top: 1rem;
+    }
+
+    .bd-action-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.87rem;
+        font-weight: 700;
+        border-radius: 11px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    }
+
+    .bd-action-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.92;
+    }
+
+    @media (max-width: 860px) {
+        .bd-layout { grid-template-columns: 1fr !important; }
+    }
+
+    @media (max-width: 560px) {
+        .bd-contact-grid { grid-template-columns: 1fr !important; }
+    }
+</style>
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; animation: fadeSlideUp 0.35s ease both;">
+    <div>
+        <p style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.3rem;">
+            <i class="fas fa-truck" style="margin-right: 0.3rem;"></i>Towing Service
+        </p>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin: 0;">Towing Request Details</h1>
+    </div>
+    <a href="{% url 'towing-order' %}"
+       style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<!-- Main layout -->
+<div class="bd-layout" style="display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start;">
+
+    <!-- ── LEFT: Main Details ───────────────────────────────── -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.05s;">
+
+        <!-- Card top: Vehicle heading -->
+        <div style="padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border);">
+            <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem;">Vehicle</p>
+            <p style="font-size: 1.15rem; font-weight: 700; color: var(--text-heading); margin: 0;">{{ towing.vehicle_details }}</p>
+        </div>
+
+        <div style="padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1.5rem;">
+
+            <!-- Contact + Vehicle row -->
+            <div class="bd-contact-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+
+                <!-- Contact Info -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-user" style="color: var(--accent);"></i> Contact Information
+                    </p>
+                    <div class="bd-info-box">
+                        <div class="bd-info-row">
+                            <i class="fas fa-user-circle" style="color: var(--accent); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Name</strong>
+                            <span>{{ towing.full_name }}</span>
+                        </div>
+                        <div class="bd-info-row">
+                            <i class="fas fa-phone" style="color: var(--success); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Phone</strong>
+                            <span>{{ towing.phone_number }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Details -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-car-side" style="color: var(--accent);"></i> Vehicle Details
+                    </p>
+                    <div class="bd-info-box" style="height: calc(100% - 1.6rem);">
+                        <div class="bd-info-row">
+                            <i class="fas fa-truck" style="color: var(--accent); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Vehicle</strong>
+                            <span>{{ towing.vehicle_details }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pickup Location -->
+            <div>
+                <p class="bd-section-label">
+                    <i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Pickup Location
+                </p>
+                <div class="bd-info-box" style="flex-direction: row; gap: 2rem; flex-wrap: wrap;">
+                    <div class="bd-info-row">
+                        <i class="fas fa-location-arrow" style="color: var(--accent); font-size: 0.8rem;"></i>
+                        <strong>Address</strong>
+                        <span>{{ towing.pickup_address }}</span>
+                    </div>
+                    {% if towing.latitude and towing.longitude %}
+                    <div class="bd-info-row">
+                        <i class="fas fa-crosshairs" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+                        <strong>Coords</strong>
+                        <span style="color: var(--text-muted);">{{ towing.latitude }}, {{ towing.longitude }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Request Time -->
+            <div>
+                <p class="bd-section-label">
+                    <i class="fas fa-calendar-check" style="color: var(--accent);"></i> Request Time
+                </p>
+                <div class="bd-info-box" style="flex-direction: row; gap: 2rem; flex-wrap: wrap;">
+                    <div class="bd-info-row">
+                        <i class="fas fa-calendar-alt" style="color: var(--accent); font-size: 0.8rem;"></i>
+                        <strong>Date</strong>
+                        <span>{{ towing.requested_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="bd-info-row">
+                        <i class="fas fa-clock" style="color: var(--success); font-size: 0.8rem;"></i>
+                        <strong>Time</strong>
+                        <span>{{ towing.requested_at|date:"H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── RIGHT: Sidebar ───────────────────────────────────── -->
+    <div>
+
+        <!-- Status card -->
+        <div class="bd-side-card" style="animation-delay: 0.1s;">
+            <p class="bd-section-label" style="margin-bottom: 0.75rem;">
+                <i class="fas fa-tasks" style="color: var(--accent);"></i> Towing Status
+            </p>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border);">
+                <span class="badge badge-{{ towing.status|default:'pending' }}"
+                      style="font-size: 0.9rem; padding: 0.5rem 1.25rem;">
+                    {{ towing.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+        <!-- OTP card -->
+        <div class="bd-side-card" style="animation-delay: 0.15s;">
+            <p class="bd-section-label" style="margin-bottom: 0.75rem;">
+                <i class="fas fa-shield-alt" style="color: var(--accent);"></i> OTP Verification
+            </p>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border);">
+                {% if towing.otp_verified %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                    <i class="fas fa-check-circle" style="font-size: 1.25rem; color: var(--success);"></i>
+                </div>
+                <p style="font-size: 0.88rem; font-weight: 700; color: var(--success); margin: 0;">Verified</p>
+                {% else %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #fff7ed; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                    <i class="fas fa-clock" style="font-size: 1.25rem; color: var(--warning);"></i>
+                </div>
+                <p style="font-size: 0.88rem; font-weight: 700; color: var(--warning); margin: 0 0 0.35rem;">Pending</p>
+                {% if towing.otp %}
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
+                    OTP: <strong style="color: var(--text-heading); letter-spacing: 0.1em;">{{ towing.otp }}</strong>
+                </p>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Requested On card -->
+        <div class="bd-side-card" style="animation-delay: 0.2s;">
+            <p class="bd-section-label" style="margin-bottom: 0.6rem;">
+                <i class="fas fa-calendar-plus" style="color: var(--accent);"></i> Requested On
+            </p>
+            <p style="font-size: 0.88rem; font-weight: 600; color: var(--text-heading); margin: 0;">
+                {{ towing.requested_at|date:"M d, Y" }}
+            </p>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.2rem 0 0;">
+                {{ towing.requested_at|date:"H:i" }}
+            </p>
+        </div>
+
+        <!-- Action buttons -->
+        {% if towing.status not in 'completed,cancelled' %}
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; animation: fadeSlideUp 0.45s ease both; animation-delay: 0.25s;">
+
+            <a href="{% url 'towing_edit' towing.id %}" class="bd-action-btn"
+               style="background: var(--accent); color: white; box-shadow: 0 4px 14px rgba(37,99,235,0.25);">
+                <i class="fas fa-edit"></i> Edit Request
+            </a>
+
+            
+            {% if towing.status in 'processing' %}
+            {% if not towing.otp_verified and towing.otp %}
+            <a href="{% url 'verify_towing_otp' towing.id %}" class="bd-action-btn"
+               style="background: var(--success); color: white; box-shadow: 0 4px 14px rgba(22,163,74,0.25);">
+                <i class="fas fa-check-circle"></i> Verify OTP
+            </a>
+            {% endif %}
+            {% endif %}
+
+            <a href="{% url 'towing_delete' towing.id %}" class="bd-action-btn"
+               style="background: #fff1f2; color: var(--danger); border: 1.5px solid #fecaca;">
+                <i class="fas fa-ban"></i> Cancel Request
+            </a>
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

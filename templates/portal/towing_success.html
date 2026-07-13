@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Dispatch Confirmed | AutoCare Elite{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 6rem auto;">
+    <div class="card" style="padding: 4rem; border-radius: 32px; text-align: center;">
+        <div
+            style="width: 80px; height: 80px; background: #ecfdf5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 2rem;">
+            <i class="fas fa-truck-moving"></i>
+        </div>
+        <h1 style="font-size: 2.5rem; color: var(--text-heading); margin-bottom: 1.5rem;">Driver Dispatched!</h1>
+        <p style="color: var(--text-body); font-size: 1.15rem; margin-bottom: 2rem;">
+            Your emergency towing request has been confirmed. A driver will arrive within <strong>30 minutes</strong>.
+        </p>
+
+        <!-- OTP Display -->
+        <div
+            style="background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 2.5rem; border-radius: 20px; margin-bottom: 3rem; border: 2px dashed var(--accent);">
+            <p
+                style="font-size: 0.9rem; font-weight: 700; color: var(--text-heading); margin-bottom: 1rem; text-transform: uppercase;">
+                🔐 Your Secure Verification Code</p>
+            <div
+                style="font-size: 3rem; font-weight: 800; color: var(--accent); letter-spacing: 8px; font-family: 'Courier New', monospace; margin-bottom: 1rem;">
+                {{ otp }}
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-body);">
+                <i class="fas fa-shield-alt" style="color: var(--success); margin-right: 0.5rem;"></i>
+                Share this OTP with the driver <strong>only after</strong> your vehicle has been safely towed.
+            </p>
+        </div>
+
+        <div
+            style="background: #fffbeb; padding: 1.5rem; border-radius: 16px; margin-bottom: 3rem; text-align: left; border: 1px solid #fef3c7;">
+            <p
+                style="font-size: 0.9rem; font-weight: 700; color: var(--text-heading); margin-bottom: 1rem; text-transform: uppercase;">
+                <i class="fas fa-info-circle" style="color: var(--warning);"></i> Important Instructions:
+            </p>
+            <ul style="color: var(--text-body); font-size: 0.95rem; line-height: 2; list-style: none; padding: 0;">
+                <li><i class="fas fa-check-circle" style="color: var(--success); margin-right: 0.75rem;"></i> Keep your
+                    phone nearby ({{ phone }})</li>
+                <li><i class="fas fa-check-circle" style="color: var(--success); margin-right: 0.75rem;"></i> Turn on
+                    hazard lights if safe</li>
+                <li><i class="fas fa-check-circle" style="color: var(--success); margin-right: 0.75rem;"></i> Wait in a
+                    secure location</li>
+                <li><i class="fas fa-shield-alt" style="color: var(--danger); margin-right: 0.75rem;"></i> <strong>Only
+                        provide OTP after service completion</strong></li>
+            </ul>
+        </div>
+
+        <a href="{% url 'home' %}" class="btn btn-primary"
+            style="width: 100%; padding: 1.25rem; font-size: 1.1rem;">Return to Homepage</a>
+    </div>
+</div>
+{% endblock %}

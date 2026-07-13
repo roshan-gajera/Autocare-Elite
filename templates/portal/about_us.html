@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Company | AutoCare Elite{% endblock %}
+
+{% block content %}
+<section style="display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; padding: 4rem 0;">
+    <div>
+        <span
+            style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; margin-bottom: 1.5rem; display: block;">TRUSTED
+            WORLDWIDE SINCE 2024</span>
+        <h1
+            style="font-size: 3.5rem; color: var(--text-heading); font-weight: 800; line-height: 1.1; margin-bottom: 2rem;">
+            Redefining Automotive Intelligence.</h1>
+        <p style="font-size: 1.15rem; color: var(--text-body); margin-bottom: 2rem;">AutoCare Elite was founded on the
+            principle that the most valuable asset you own deserves the highest level of digital oversight.</p>
+        <p style="color: var(--text-body); margin-bottom: 3rem;">Our platform bridges the gap between traditional
+            mechanical excellence and modern data science, providing vehicle owners and managers with the clarity they
+            need to make smarter maintenance decisions.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div>
+                <h4 style="font-size: 2rem; color: var(--accent); font-weight: 800;">50k+</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">ACTIVE USERS</p>
+            </div>
+            <div>
+                <h4 style="font-size: 2rem; color: var(--success); font-weight: 800;">99.9%</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">UPTIME RECORD</p>
+            </div>
+        </div>
+    </div>
+    <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000"
+            style="width: 100%; height: 600px; object-fit: cover; border-radius: 32px; box-shadow: 0 40px 80px -20px rgba(0,0,0,0.2);"
+            alt="About Us">
+        <div
+            style="position: absolute; bottom: -30px; right: -30px; background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow-lg); width: 280px; border: 1px solid var(--border);">
+            <p style="font-style: italic; color: var(--text-heading); font-weight: 500; margin-bottom: 1rem;">"Their
+                platform has completely optimized our fleet's health cycles."</p>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent);"></div>
+                <div>
+                    <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-heading);">Sarah Jenkins</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">Fleet Director, Logistics Co.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 10rem 0;">
+    <div style="text-align: center; margin-bottom: 5rem;">
+        <h2 style="font-size: 2.5rem; color: var(--text-heading);">Our Core Pillars</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;">
+        <div class="card" style="text-align: center; border: none; background: white; padding: 20px;">
+            <div
+                style="width: 64px; height: 64px; background: white; border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); margin: 0 auto 2rem; box-shadow: var(--shadow-lg);">
+                <i class="fas fa-microchip"></i>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Innovation</h3>
+            <p style="color: var(--text-body);">Constantly pushing the boundaries of what's possible in vehicle health
+                analytics.</p>
+        </div>
+        <div class="card" style="text-align: center; border: none; background: white; padding: 20px;">
+            <div
+                style="width: 64px; height: 64px; background: white; border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); margin: 0 auto 2rem; box-shadow: var(--shadow-lg);">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Integrity</h3>
+            <p style="color: var(--text-body);">Verifiable data that you can trust to represent the true state of your
+                assets.</p>
+        </div>
+        <div class="card" style="text-align: center; border: none; background: white; padding: 20px;">
+            <div
+                style="width: 64px; height: 64px; background: white; border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); margin: 0 auto 2rem; box-shadow: var(--shadow-lg);">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Customer First</h3>
+            <p style="color: var(--text-body);">Every feature we build is designed to solve a real-world problem for our
+                users.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

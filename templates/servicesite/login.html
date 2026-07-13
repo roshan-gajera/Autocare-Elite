@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — AutoCare Pro</title>
+    <link rel="stylesheet" href="{% static 'servicesite/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+    <style>
+        body {
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .auth-split {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            width: 100%;
+            max-width: 880px;
+            min-height: 530px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp .45s ease;
+        }
+
+        /* LEFT brand panel */
+        .auth-brand {
+            background: var(--navy);
+            padding: 50px 46px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-brand::before {
+            content:'';
+            position:absolute; right:-60px; bottom:-60px;
+            width:300px; height:300px;
+            background:radial-gradient(circle, rgba(232,93,38,.14) 0%, transparent 65%);
+            border-radius:50%;
+        }
+        .auth-brand::after {
+            content:'';
+            position:absolute; right:10px; bottom:20px;
+            width:380px; height:220px;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 280'%3E%3Cg opacity='.09' fill='%23ffffff'%3E%3Crect x='60' y='140' width='380' height='78' rx='18'/%3E%3Cpath d='M148 140 C162 92 205 74 250 72 C295 74 338 92 352 140Z'/%3E%3Crect x='162' y='88' width='72' height='50' rx='7' opacity='.4'/%3E%3Crect x='244' y='88' width='100' height='50' rx='7' opacity='.4'/%3E%3Ccircle cx='142' cy='218' r='36'/%3E%3Ccircle cx='358' cy='218' r='36'/%3E%3Ccircle cx='142' cy='218' r='19' fill='%231a2340'/%3E%3Ccircle cx='358' cy='218' r='19' fill='%231a2340'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:center; background-size:contain;
+            pointer-events:none;
+        }
+
+        .brand-logo { display:flex; align-items:center; gap:12px; z-index:2; position:relative; }
+        .brand-logo .logo-icon { width:44px; height:44px; font-size:18px; }
+        .brand-logo-text { font-family:var(--font); font-size:20px; font-weight:800; color:#fff; }
+        .brand-logo-text em { color:var(--coral); font-style:normal; }
+
+        .brand-body { position:relative; z-index:2; }
+        .brand-body h2 {
+            font-size:36px; font-weight:800; color:#fff;
+            line-height:1.1; letter-spacing:-1px; margin-bottom:14px;
+        }
+        .brand-body h2 span { color:var(--coral); }
+        .brand-body p { font-size:14px; color:rgba(255,255,255,.55); line-height:1.7; max-width:300px; }
+
+        .brand-pills { display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; }
+        .brand-pill {
+            display:flex; align-items:center; gap:6px;
+            font-family:var(--font-mono); font-size:11px;
+            padding:5px 11px; border-radius:20px;
+            background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+            color:rgba(255,255,255,.65);
+        }
+        .brand-pill i { color:var(--coral); font-size:10px; }
+
+        .brand-footer { font-family:var(--font-mono); font-size:10px; color:rgba(255,255,255,.25); z-index:2; position:relative; }
+
+        /* RIGHT form panel */
+        .auth-form-panel {
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+        }
+        .auth-form-title {
+            font-size: 24px; font-weight: 800; color: var(--text-1);
+            margin-bottom: 4px;
+        }
+        .auth-form-sub { font-size: 13px; color: var(--text-3); margin-bottom: 32px; }
+
+        /* Error alert */
+        .auth-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 14px;
+            background: var(--red-bg);
+            border: 1px solid #fecaca;
+            border-left: 4px solid var(--red);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            animation: fadeIn .3s ease;
+        }
+        .auth-error i { color: var(--red); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+        .auth-error span { font-size: 13px; color: var(--red); font-weight: 500; line-height: 1.5; }
+
+        .auth-form-group { margin-bottom: 18px; }
+        .auth-form-group label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; color: var(--text-2);
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px;
+        }
+        .auth-form-group label i { color: var(--coral); font-size: 11px; }
+
+        .forgot-row {
+            display: flex; justify-content: flex-end; margin-bottom: 24px;
+        }
+        .forgot-row a { font-size: 12px; color: var(--coral); font-weight: 600; transition:opacity .2s; }
+        .forgot-row a:hover { opacity: .7; }
+
+        .btn-login {
+            width: 100%; background: var(--coral); color: #fff;
+            font-size: 14px; font-weight: 700; padding: 12px;
+            border-radius: var(--radius); border: none; cursor: pointer;
+            transition: var(--trans); display: flex; align-items: center;
+            justify-content: center; gap: 8px; font-family: var(--font);
+            box-shadow: 0 2px 8px rgba(232,93,38,.28);
+        }
+        .btn-login:hover { background: var(--coral-dim); box-shadow: 0 4px 16px rgba(232,93,38,.38); transform: translateY(-1px); }
+
+        .auth-footer-link { margin-top: 22px; text-align: center; font-size: 13px; color: var(--text-3); }
+        .auth-footer-link a { color: var(--coral); font-weight: 600; }
+        .auth-footer-link a:hover { text-decoration: underline; }
+
+        @media (max-width:700px) {
+            .auth-split { grid-template-columns: 1fr; }
+            .auth-brand { display: none; }
+            .auth-form-panel { padding: 36px 26px; }
+        }
+    </style>
+</head>
+<body>
+<div class="auth-split">
+
+    <!-- Brand -->
+    <div class="auth-brand">
+        <div class="brand-logo">
+            <div class="logo-icon"><i class="fas fa-car"></i></div>
+            <div class="brand-logo-text">AutoCare <em>Pro</em></div>
+        </div>
+        <div class="brand-body">
+            <h2>Drive <span>smarter</span><br>admin panel.</h2>
+            <p>Manage service orders, towing requests, and customer messages from one powerful dashboard.</p>
+            <div class="brand-pills">
+                <div class="brand-pill"><i class="fas fa-wrench"></i> Service Orders</div>
+                <div class="brand-pill"><i class="fas fa-truck"></i> Towing</div>
+                <div class="brand-pill"><i class="fas fa-inbox"></i> Messages</div>
+                <div class="brand-pill"><i class="fas fa-gauge-high"></i> Dashboard</div>
+            </div>
+        </div>
+        <div class="brand-footer">© 2024 AutoCare Pro · Admin Panel</div>
+    </div>
+
+    <!-- Form -->
+    <div class="auth-form-panel">
+        <div class="auth-form-title">Welcome back</div>
+        <div class="auth-form-sub">Sign in to access the admin dashboard</div>
+
+        <!-- Error message block — shown when Django passes messages or form errors -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="auth-error">
+            <i class="fas fa-circle-exclamation"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+        <div class="auth-error">
+            <i class="fas fa-circle-exclamation"></i>
+            <span>{% for error in form.non_field_errors %}{{ error }}{% endfor %}</span>
+        </div>
+        {% endif %}
+
+        <!-- Inline error for invalid credentials (common Django auth pattern) -->
+        {% if error %}
+        <div class="auth-error">
+            <i class="fas fa-circle-exclamation"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="auth-form-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" name="username" placeholder="Enter your username" autocomplete="username">
+            </div>
+            <div class="auth-form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password">
+            </div>
+            <div class="forgot-row">
+                <a href="#">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn-login">
+                <i class="fas fa-arrow-right-to-bracket"></i> Sign In
+            </button>
+        </form>
+
+        <div class="auth-footer-link">
+            Don't have an account? <a href="{% url 'servicesite-register' %}">Register here</a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

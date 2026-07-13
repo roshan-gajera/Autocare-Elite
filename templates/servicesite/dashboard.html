@@ -1,0 +1,94 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content { animation:fadeIn .42s ease; }
+</style>
+
+<div class="page-content">
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-wrench"></i></div>
+            <div class="stat-content"><h3>{{ services.total_service }}</h3><p>Service Orders</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-truck"></i></div>
+            <div class="stat-content"><h3>{{ services.total_towing }}</h3><p>Towing Orders</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-hourglass-half"></i></div>
+            <div class="stat-content"><h3>{{ services.pending_order }}</h3><p>Pending Orders</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon info"><i class="fas fa-users"></i></div>
+            <div class="stat-content"><h3>{{ services.total_customer }}</h3><p>Total Order</p></div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <!-- Service Orders -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3><i class="fas fa-wrench"></i> Recent Service Orders</h3>
+                <span class="badge badge-primary">Latest 5</span>
+            </div>
+            <div class="card-body">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Services</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in services.service_customer %}
+                        <tr>
+                            <td><span class="order-id">#{{ customer.id }}</span></td>
+                            <td style="color:var(--text-1);font-weight:600;">{{ customer.customer_name }}</td>
+                            <td>
+                                {% for service in customer.services.all %}
+                                <span style="font-size:12px;display:block;color:var(--text-3);">{{ service.title }}</span>
+                                {% endfor %}
+                            </td>
+                            <td><span class="status-badge status-{{ customer.status }}">{{ customer.status|title }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Towing Orders -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3><i class="fas fa-truck"></i> Recent Towing Orders</h3>
+                <span class="badge badge-warning">Latest 6</span>
+            </div>
+            <div class="card-body">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in services.towing_customer %}
+                        <tr>
+                            <td><span class="order-id">#{{ customer.id }}</span></td>
+                            <td style="color:var(--text-1);font-weight:600;">{{ customer.full_name }}</td>
+                            <td><span class="status-badge status-{{ customer.status }}">{{ customer.status|title }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

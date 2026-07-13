@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}All Bookings | AutoCare Elite{% endblock %}
+
+{% block content %}
+<div class="glass-card animate-in">
+    <h1 style="margin-bottom: 2rem;">
+        <i class="fas fa-list" style="color: var(--primary);"></i>
+        All Service Bookings
+    </h1>
+
+    <!-- Search Form -->
+    <div class="glass-card" style="background: var(--glass-bg); margin-bottom: 2rem; padding: 1.5rem;">
+        <form method="get" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin: 0;">
+                <label>Phone Number</label>
+                <input type="text" name="phone" class="input-field" placeholder="+91 XXXXXXXXXX"
+                    value="{{ search_phone }}">
+            </div>
+            <div class="form-group" style="margin: 0;">
+                <label>Email Address</label>
+                <input type="email" name="email" class="input-field" placeholder="email@example.com"
+                    value="{{ search_email }}">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+    </div>
+
+    {% if bookings %}
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+        {% for booking in bookings %}
+        <div class="glass-card" style="border-left: 4px solid var(--primary);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">
+                        {% with first_service=booking.services.first %}
+                        {{ first_service.title }}
+                        {% if booking.services.count > 1 %}
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">
+                            (+{{ booking.services.count|add:"-1" }} others)
+                        </span>
+                        {% endif %}
+                        {% endwith %}
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        {{ booking.customer_name }}
+                    </p>
+                </div>
+                <span class="badge" style="
+                            {% if booking.status == 'completed' %}background: var(--success);
+                            {% elif booking.status == 'cancelled' %}background: var(--danger);
+                            {% elif booking.status == 'in_progress' %}background: var(--warning);
+                            {% else %}background: var(--primary);{% endif %}
+                            color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                    {{ booking.get_status_display }}
+                </span>
+            </div>
+
+            <div style="margin-bottom: 1rem; padding: 1rem; background: var(--glass-bg); border-radius: 10px;">
+                <p style="margin-bottom: 0.5rem;"><strong>Date:</strong> {{ booking.preferred_date }} at {{
+                    booking.preferred_time }}</p>
+                <p style="margin-bottom: 0.5rem;"><strong>Phone:</strong> {{ booking.customer_phone }}</p>
+                <p><strong>Vehicle:</strong> {{ booking.vehicle_info }}</p>
+            </div>
+
+            <a href="{% url 'booking_detail' booking.id %}" class="btn btn-primary"
+                style="width: 100%; text-align: center;">
+                <i class="fas fa-eye"></i> View Details
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card" style="text-align: center; padding: 4rem; background: var(--glass-bg);">
+        <i class="fas fa-inbox" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1.5rem;"></i>
+        <p style="color: var(--text-muted);">No bookings found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

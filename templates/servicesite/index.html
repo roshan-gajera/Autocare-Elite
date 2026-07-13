@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoCare Pro - Services</title>
+    <link rel="stylesheet" href="{% static 'servicesite/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+    {% block css %}
+    <style>
+        .index-active {
+            background: rgba(255, 255, 255, .09);
+            color: #fff;
+            border-color: rgba(255, 255, 255, .07);
+            border-radius: var(--radius);
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body>
+    <div class="admin-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-car"></i></div>
+                    <span class="logo-text">AutoCare <span>Pro</span></span>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Main</div>
+                    <ul>
+                        <li
+                            class="index-{% if request.resolver_match.url_name == 'servicesite-home' %}active{% endif %}">
+                            <a href="{% url 'servicesite-home' %}"><i class="fas fa-house"></i><span>Home</span></a>
+                        </li>
+                        <li
+                            class="index-{% if request.resolver_match.url_name == 'servicesite-dashboard' %}active{% endif %}">
+                            <a href="{% url 'servicesite-dashboard' %}"><i
+                                    class="fas fa-gauge-high"></i><span>Dashboard</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-section-title">Management</div>
+                    <ul>
+                        <li class="index-{% if request.resolver_match.url_name == 'servicesite-serviceorder' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-serviceorder-show' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-serviceorder-edit' %}active
+                    {% endif %}">
+                            <a href="{% url 'servicesite-serviceorder' %}"><i class="fas fa-wrench"></i><span>Service
+                                    Orders</span></a>
+                        </li>
+
+
+                        <li class="index-{% if request.resolver_match.url_name == 'servicesite-towingorder' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-towingorder-show' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-towingorder-edit' %}active
+                    {% endif %}">
+                            <a href="{% url 'servicesite-towingorder' %}"><i class="fas fa-truck"></i><span>Towing
+                                    Orders</span></a>
+                        </li>
+
+
+                        <li class="index-{% if request.resolver_match.url_name == 'servicesite-message' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-message-show' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-message-edit' %}active
+                    {% endif %}">
+                            <a href="{% url 'servicesite-message' %}"><i
+                                    class="fas fa-inbox"></i><span>Messages</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="menu-section">
+                    <div class="menu-section-title">Settings</div>
+                    <ul>
+                        <li class="index-{% if request.resolver_match.url_name == 'servicesite-profile' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-service-add' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-service-edit' %}active
+                    {% elif request.resolver_match.url_name == 'servicesite-service-delete' %}active
+                    {% endif %}">
+                            <a href="{% url 'servicesite-profile' %}"><i class="fas fa-sliders"></i><span>Profile &
+                                    Services</span></a>
+                        </li>
+
+                        <li><a href="{% url 'servicesite-logout' %}">
+                                <i class="fas fa-arrow-right-from-bracket"></i><span>Logout</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Top Header -->
+            <header class="top-header">
+                <h1>
+                    <span class="header-icon"><i class="fas fa-car"></i></span>
+                    {% if request.resolver_match.url_name == 'servicesite-home' %}
+                    Service Home
+                    {% elif request.resolver_match.url_name == 'servicesite-dashboard' %}
+                    Service Dashboard
+                    {% elif request.resolver_match.url_name == 'servicesite-serviceorder' %}
+                    Service Order
+                    {% elif request.resolver_match.url_name == 'servicesite-towingorder' %}
+                    Towing Order
+                    {% elif request.resolver_match.url_name == 'servicesite-message' %}
+                    Service Message
+                    {% elif request.resolver_match.url_name == 'servicesite-profile' %}
+                    Service Profile
+                    {% else %}
+                    Service Panal
+                    {% endif %}
+                </h1>
+                {% if request.resolver_match.url_name == 'servicesite-home' %}
+                <div class="header-actions">
+                    <div class="profile-wrap">
+
+                        <!-- Checkbox lives here so :has() selector works on .profile-wrap -->
+                        <input type="checkbox" id="profile-toggle">
+
+                        <!-- Backdrop: clicking outside closes popup -->
+                        <label class="profile-backdrop" for="profile-toggle"></label>
+
+                        <!-- Clicking the user card toggles the checkbox -->
+                        <label for="profile-toggle">
+                            <div class="user-profile">
+                                <div class="user-avatar"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <div class="user-name">{{user.username}}</div>
+                                    <div class="user-role">{{user.email}}</div>
+                                </div>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size:10px;color:var(--text-3);margin-left:4px;"></i>
+                            </div>
+                        </label>
+
+                        <!-- Profile Popup -->
+                        <div class="profile-popup">
+
+                            <!-- Header -->
+                            <div class="pp-header">
+                                <div class="pp-avatar"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <div class="pp-user-name">{{ user.username }}</div>
+                                    <div class="pp-user-email">{{ user.email }}</div>
+                                </div>
+                                <!-- Close button -->
+                                <label for="profile-toggle" class="pp-close" title="Close">
+                                    <i class="fas fa-xmark"></i>
+                                </label>
+                            </div>
+
+                            <!-- Body: update form -->
+                            <div class="pp-body">
+                                <div class="pp-section-label">Update Profile</div>
+
+                                <form method="post">
+                                    {% csrf_token %}
+
+                                    <div class="pp-field">
+                                        <label><i class="fas fa-user"></i> {{services.form.username.label}}</label>
+                                        {{services.form.username}}
+                                    </div>
+
+                                    <div class="pp-field">
+                                        <label><i class="fas fa-envelope"></i> {{services.form.email.label}}</label>
+                                        {{services.form.email}}
+                                    </div>
+
+                                    <div class="pp-divider"></div>
+
+                                    <div class="pp-actions">
+                                        <label for="profile-toggle" class="pp-btn pp-btn-cancel">
+                                            <i class="fas fa-xmark"></i> Cancel
+                                        </label>
+                                        <button type="submit" class="pp-btn pp-btn-save">
+                                            <i class="fas fa-floppy-disk"></i> Save Changes
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </div><!-- /profile-popup -->
+                    </div><!-- /profile-wrap -->
+                </div>
+                {% endif %}
+            </header>
+
+            {% block content %}
+            <!-- HOME PAGE -->
+            <div class="page-content" style="animation:fadeIn .45s ease;">
+
+                <!-- Hero -->
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="hero-tag">
+                            <span class="hero-tag-dot"></span>
+                            <span>System Online</span>
+                        </div>
+                        <h1>AutoCare <span>Pro</span></h1>
+                        <p>Your trusted partner for premium automotive services. Manage orders, track towing, and stay
+                            in control.</p>
+                        <a href="{% url 'servicesite-dashboard' %}" class="btn btn-primary">
+                            <i class="fas fa-gauge-high"></i> Open Dashboard
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <section style="margin-bottom:26px;">
+                    <div class="section-title">
+                        <h2>Our Services</h2>
+                        <p>Comprehensive automotive solutions tailored to your needs</p>
+                    </div>
+                    <div class="admin-services-grid">
+                        {% for service in services.services %}
+                        <div class="admin-service-card">
+                            <h4><i class="{{ service.icon_class }}"></i> {{ service.title }}</h4>
+                            <p>{{ service.description }}</p>
+                            <div class="price">From ₹{{ service.price_starts_at }}</div>
+                            <div style="margin-top:11px;">
+                                <span
+                                    class="status-badge {% if service.is_active %}status-completed{% else %}status-cancelled{% endif %}">
+                                    {% if service.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Why Choose Us -->
+                <section style="margin-bottom:26px;">
+                    <div class="section-title">
+                        <h2>Why Choose Us</h2>
+                        <p>Experience excellence in automotive care</p>
+                    </div>
+                    <div class="admin-services-grid">
+                        <div class="admin-service-card">
+                            <h4><i class="fas fa-certificate"></i> Certified Experts</h4>
+                            <p>Our team consists of certified professionals with years of experience in automotive care.
+                            </p>
+                        </div>
+                        <div class="admin-service-card">
+                            <h4><i class="fas fa-clock"></i> Quick Service</h4>
+                            <p>We value your time with services completed within the promised timeframe, every time.</p>
+                        </div>
+                        <div class="admin-service-card">
+                            <h4><i class="fas fa-shield-halved"></i> Quality Warranty</h4>
+                            <p>All our services come with warranty coverage for complete peace of mind.</p>
+                        </div>
+                        <div class="admin-service-card">
+                            <h4><i class="fas fa-tags"></i> Fair Pricing</h4>
+                            <p>Transparent pricing with no hidden fees — the best rates in town, guaranteed.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon warning"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-content">
+                            <h3>15+</h3>
+                            <p>Years Experience</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success"><i class="fas fa-car"></i></div>
+                        <div class="stat-content">
+                            <h3>50K+</h3>
+                            <p>Cars Serviced</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fas fa-heart"></i></div>
+                        <div class="stat-content">
+                            <h3>98%</h3>
+                            <p>Satisfied Clients</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info"><i class="fas fa-headset"></i></div>
+                        <div class="stat-content">
+                            <h3>24/7</h3>
+                            <p>Emergency Support</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% endblock %}
+
+            <footer class="admin-footer">
+                <p>&copy; 2026 AutoCare Pro Admin Panel — All Rights Reserved</p>
+            </footer>
+        </main>
+
+    </div>
+</body>
+
+</html>

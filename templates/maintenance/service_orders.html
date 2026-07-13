@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Service Orders | AutoCare Pro{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header fade-up">
+    <div>
+        <h1>My Service Orders</h1>
+        <p>Track all your vehicle maintenance and service requests.</p>
+    </div>
+    <a href="{% url 'portal_service_list' %}" class="btn btn-primary">
+        <i class="fas fa-plus" style="margin-right:0.4rem;"></i>New Service Order
+    </a>
+</div>
+
+<!-- Summary pills -->
+<div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.75rem;" class="fade-up">
+    <span class="badge badge-pending"    style="font-size:0.78rem; padding:0.3rem 0.75rem;">Pending: {{ services.pending_order|default:"0" }}</span>
+    <span class="badge badge-confirmed"  style="font-size:0.78rem; padding:0.3rem 0.75rem;">Confirmed: {{ services.confirmed_order|default:"0" }}</span>
+    <span class="badge badge-processing" style="font-size:0.78rem; padding:0.3rem 0.75rem;">In Progress: {{ services.processing_order|default:"0" }}</span>
+    <span class="badge badge-completed"  style="font-size:0.78rem; padding:0.3rem 0.75rem;">Completed: {{ services.completed_order|default:"0" }}</span>
+    <span class="badge badge-cancelled"  style="font-size:0.78rem; padding:0.3rem 0.75rem;">Cancelled: {{ services.cancelled_order|default:"0" }}</span>
+</div>
+
+<!-- Cards -->
+<div class="tow-grid" id="so-list">
+    {% for order in services.service_order %}
+    <div class="tow-card fade-up">
+
+        <!-- Top: customer + status -->
+        <div class="tow-card-top">
+            <div style="display:flex; align-items:center; gap:0.65rem;">
+                <div class="so-avatar">{{ order.customer_name|first|upper }}</div>
+                <div>
+                    <div class="tow-vehicle">{{ order.customer_name|upper }}</div>
+                    <div class="tow-id">
+                        <i class="fas fa-phone" style="font-size:0.62rem; margin-right:0.25rem;"></i>{{ order.customer_phone }}
+                    </div>
+                </div>
+            </div>
+            <span class="badge badge-{{ order.status|default:'pending' }}">
+                {{ order.status|default:"Pending"|capfirst }}
+            </span>
+        </div>
+
+        <!-- Body -->
+        <div class="tow-card-body">
+
+            <!-- Services chips -->
+            <div class="so-cell-services" style="flex-wrap:wrap; gap:0.35rem; display:flex;">
+                {% for service in order.services.all %}
+                    <span class="so-chip">{{ service.title }}</span>
+                {% endfor %}
+            </div>
+
+            <!-- Date -->
+            <div class="tow-info-row">
+                <i class="fas fa-calendar-alt" style="color:var(--accent);"></i>
+                {{ order.preferred_date|date:"d-m-Y" }}&nbsp;
+                <span style="color:var(--text-muted);">{{ order.preferred_date|date:"l" }}</span>
+            </div>
+
+            <!-- Payment status -->
+            <div class="tow-info-row">
+                {% if order.is_paid %}
+                <i class="fas fa-check-circle" style="color:var(--success);"></i>
+                <span style="color:var(--success); font-weight:600;">Paid</span>
+                {% else %}
+                <i class="fas fa-clock" style="color:var(--warning);"></i>
+                <span style="color:var(--warning); font-weight:600;">Unpaid</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Footer: cost + actions -->
+        <div class="tow-card-footer">
+            <span class="tow-cost">&#8377;{{ order.total_estimated_cost|floatformat:2 }}</span>
+            <div style="display:flex; gap:0.5rem;">
+                {% if order.status == 'pending' %}
+                <a href="{% url 'booking_delete' order.id %}" class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:var(--danger);">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                {% endif %}
+                <a href="{% url 'booking_detail' order.id %}" class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.78rem;">
+                    <i class="fas fa-eye"></i> Details
+                </a>
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+    <div class="empty-state" style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:16px;">
+        <i class="fas fa-clipboard-list"></i>
+        <p>You have no service orders yet.</p>
+        <a href="{% url 'portal_service_list' %}" class="btn btn-primary">Book Your First Service</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

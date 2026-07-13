@@ -1,0 +1,70 @@
+{% extends 'superadmin/dashboard.html' %}
+
+{% block content %}
+
+
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="tb-title">Towing Requests</div>
+      <div class="tb-bread"><span>Admin</span><span class="sep">/</span><span class="cur">Towing</span></div>
+    </div>
+  </header>
+
+  <div class="page fade-up">
+    <div class="ph">
+      <div>
+        <h1>Towing Requests</h1>
+        <p>Monitor and manage all roadside towing requests.</p>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-head">
+          <div class="card-title"><i class="fas fa-truck-pickup"></i> All Requests</div>
+        </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Phone Number</th>
+              <th>Shop Name</th>
+              <th>Vehicle</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%  for towing in towing.all_towing %}
+            <tr>
+              <td class="td-m" style="font-weight: bold;">{{towing.id}}</td>
+              <td>
+                <div class="td-h">{{ towing.full_name|capfirst }}</div>
+              </td>
+              
+              <td style="font-weight: bold;">+91 {{towing.phone_number}}</td>
+              <td style="font-weight: bold;">{{towing.shop}}</td>
+              <td style="font-weight: bold;">{{ towing.vehicle_details }}</td>
+              <td class="td-m" style="font-weight: bold;">{{ towing.requested_at|date:"d-m-Y" }}</td>
+              <td>
+                <div class="t-actions">
+              
+                  <a href="{% url 'admin-delete-towing' towing.id %}" class="btn btn-danger btn-sm btn-icon"><i class="fas fa-trash"></i></a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

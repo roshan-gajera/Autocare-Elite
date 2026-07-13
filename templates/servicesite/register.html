@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — AutoCare Pro</title>
+    <link rel="stylesheet" href="{% static 'servicesite/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+    <style>
+        body {
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* ── Same split container as login ── */
+        .auth-split {
+            display: grid;
+            grid-template-columns: 1fr 460px;
+            width: 100%;
+            max-width: 920px;
+            min-height: 580px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp .45s ease;
+        }
+
+        /* ── LEFT brand panel — identical to login ── */
+        .auth-brand {
+            background: var(--navy);
+            padding: 50px 46px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-brand::before {
+            content: '';
+            position: absolute;
+            right: -60px;
+            bottom: -60px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(232, 93, 38, .14) 0%, transparent 65%);
+            border-radius: 50%;
+        }
+
+        .auth-brand::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            width: 380px;
+            height: 220px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 280'%3E%3Cg opacity='.09' fill='%23ffffff'%3E%3Crect x='60' y='140' width='380' height='78' rx='18'/%3E%3Cpath d='M148 140 C162 92 205 74 250 72 C295 74 338 92 352 140Z'/%3E%3Crect x='162' y='88' width='72' height='50' rx='7' opacity='.4'/%3E%3Crect x='244' y='88' width='100' height='50' rx='7' opacity='.4'/%3E%3Ccircle cx='142' cy='218' r='36'/%3E%3Ccircle cx='358' cy='218' r='36'/%3E%3Ccircle cx='142' cy='218' r='19' fill='%231a2340'/%3E%3Ccircle cx='358' cy='218' r='19' fill='%231a2340'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .brand-logo .logo-icon {
+            width: 44px;
+            height: 44px;
+            font-size: 18px;
+        }
+
+        .brand-logo-text {
+            font-family: var(--font);
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .brand-logo-text em {
+            color: var(--coral);
+            font-style: normal;
+        }
+
+        .brand-body {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-body h2 {
+            font-size: 34px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+        }
+
+        .brand-body h2 span {
+            color: var(--coral);
+        }
+
+        .brand-body p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .55);
+            line-height: 1.7;
+            max-width: 300px;
+        }
+
+        .brand-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .brand-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-step-num {
+            width: 26px;
+            height: 26px;
+            background: rgba(232, 93, 38, .25);
+            border: 1px solid rgba(232, 93, 38, .4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--coral);
+            flex-shrink: 0;
+        }
+
+        .brand-step-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .6);
+        }
+
+        .brand-footer {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: rgba(255, 255, 255, .25);
+            z-index: 2;
+            position: relative;
+        }
+
+        /* ── RIGHT form panel ── */
+        .auth-form-panel {
+            padding: 40px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fff;
+            overflow-y: auto;
+        }
+
+        .auth-form-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-1);
+            margin-bottom: 3px;
+        }
+
+        .auth-form-sub {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 24px;
+        }
+
+        /* Field error inline */
+        .field-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--red-bg);
+            border: 1px solid #fecaca;
+            border-left: 3px solid var(--red);
+            border-radius: 8px;
+            margin-top: 6px;
+            animation: fadeIn .25s ease;
+        }
+
+        .field-error i {
+            color: var(--red);
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .field-error span {
+            font-size: 12px;
+            color: var(--red);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Form groups — same class as login */
+        .auth-form-group {
+            margin-bottom: 14px;
+        }
+
+        .auth-form-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+
+        .auth-form-group label i {
+            color: var(--coral);
+            font-size: 11px;
+        }
+
+        /* Two-column grid for password row */
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Admin staff checkbox row */
+        .staff-toggle {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 14px;
+            background: var(--bg-raised);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: var(--trans);
+        }
+
+        .staff-toggle:hover {
+            border-color: var(--coral);
+            background: var(--coral-light);
+        }
+
+        .staff-toggle label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-1);
+            cursor: pointer;
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .staff-toggle label i {
+            color: var(--coral);
+            font-size: 13px;
+        }
+
+        /* Submit button — same as login .btn-login */
+        .btn-register {
+            width: 100%;
+            background: var(--coral);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: var(--trans);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--font);
+            box-shadow: 0 2px 8px rgba(232, 93, 38, .28);
+        }
+
+        .btn-register:hover {
+            background: var(--coral-dim);
+            box-shadow: 0 4px 16px rgba(232, 93, 38, .38);
+            transform: translateY(-1px);
+        }
+
+        /* Footer link */
+        .auth-footer-link {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-3);
+        }
+
+        .auth-footer-link a {
+            color: var(--coral);
+            font-weight: 600;
+        }
+
+        .auth-footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 720px) {
+            .auth-split {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-brand {
+                display: none;
+            }
+
+            .auth-form-panel {
+                padding: 36px 26px;
+            }
+
+            .form-row-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-split">
+
+        <!-- ── Brand Panel (left) ── -->
+        <div class="auth-brand">
+            <div class="brand-logo">
+                <div class="logo-icon"><i class="fas fa-car"></i></div>
+                <div class="brand-logo-text">AutoCare <em>Pro</em></div>
+            </div>
+
+            <div class="brand-body">
+                <h2>Join the <span>admin</span><br>team today.</h2>
+                <p>Create your account to start managing service orders, customers, and towing requests.</p>
+                <div class="brand-steps">
+                    <div class="brand-step">
+                        <div class="brand-step-num">1</div>
+                        <span class="brand-step-text">Fill in your account details</span>
+                    </div>
+                    <div class="brand-step">
+                        <div class="brand-step-num">2</div>
+                        <span class="brand-step-text">Set admin privileges if needed</span>
+                    </div>
+                    <div class="brand-step">
+                        <div class="brand-step-num">3</div>
+                        <span class="brand-step-text">Sign in and access the dashboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-footer">© 2024 AutoCare Pro · Admin Panel</div>
+        </div>
+
+        <!-- ── Form Panel (right) ── -->
+        <div class="auth-form-panel">
+            <div class="auth-form-title">Create Account</div>
+            <div class="auth-form-sub">Register a new admin account for AutoCare Pro</div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div class="auth-form-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    {{ form.username }}
+                    {% for error in form.username.errors %}
+                    <div class="field-error">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Email -->
+                <div class="auth-form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}
+                    <div class="field-error">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Password + Confirm — two columns -->
+                <div class="form-row-2">
+                    <div class="auth-form-group" style="margin-bottom:0;">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="auth-form-group" style="margin-bottom:0;">
+                        <label><i class="fas fa-lock"></i> Confirm Password</label>
+                        {{ form.password2 }}
+
+                    </div>
+                </div>
+                <div style="width: 100%;">
+                    {% if form.password1.errors %}
+                    {% for error in form.password1.errors %}
+                    <div class="field-error">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                    {% elif form.password2.errors %}
+                    {% for error in form.password2.errors %}
+                    <div class="field-error">
+                        <i class="fas fa-circle-exclamation"></i>
+                        <span>{{ error }}</span>
+                    </div>
+                    {% endfor %}
+
+                    {% endif %}
+                </div>
+
+
+
+                <!-- Admin staff toggle -->
+                <div class="staff-toggle" style="margin-top:16px;">
+                    {{ form.is_staff }}
+                    <label for="{{ form.is_staff.id_for_label }}">
+                        <i class="fas fa-user-shield"></i>
+                        Grant Admin Staff Privileges
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer-link">
+                Already have an account? <a href="{% url 'servicesite-login' %}">Sign in here</a>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content {
+        animation: fadeIn .42s ease;
+    }
+
+    .show-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        max-width: 940px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .show-card-header {
+        background: var(--bg-raised);
+        border-bottom: 1px solid var(--border);
+        padding: 22px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .show-card-header h2 {
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--text-1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .show-card-header h2 i {
+        color: var(--coral);
+    }
+
+    .order-badge {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--navy);
+        background: var(--navy-light);
+        border: 1px solid #c5cadf;
+        border-radius: 8px;
+        padding: 5px 13px;
+    }
+
+    .show-card-body {
+        padding: 28px 32px;
+    }
+
+    /* Section block */
+    .info-section {
+        margin-bottom: 26px;
+    }
+
+    .info-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .info-section-title {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-3);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .info-section-title i {
+        color: var(--coral);
+        font-size: 11px;
+    }
+
+    .info-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    /* Grid for fields */
+    .fields-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .fields-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    .col-2 {
+        grid-column: span 2;
+    }
+
+    .col-3 {
+        grid-column: span 3;
+    }
+
+    .field-item label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-3);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Services tags area */
+    .services-tags {
+        background: var(--bg-input);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        min-height: 44px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        align-items: flex-start;
+    }
+
+    .service-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 11px;
+        background: var(--coral-light);
+        border: 1px solid #f5c4af;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--coral-dim);
+        font-weight: 600;
+    }
+
+    .service-tag i {
+        font-size: 10px;
+    }
+
+    .show-card-footer {
+        padding: 18px 32px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        background: var(--bg-raised);
+    }
+
+    @media (max-width:680px) {
+        .show-card-body {
+            padding: 20px 18px;
+        }
+
+        .show-card-header {
+            padding: 18px;
+        }
+
+        .fields-grid-2,
+        .fields-grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .col-2,
+        .col-3 {
+            grid-column: span 1;
+        }
+
+        .show-card-footer {
+            padding: 14px 18px 20px;
+        }
+    }
+</style>
+
+<div class="page-content">
+    <div class="show-card">
+
+        <!-- Header -->
+        <div class="show-card-header">
+            <h2><i class="fas fa-receipt"></i> Message Details</h2>
+            <span class="order-badge"># {{ services.message_show.id }}</span>
+        </div>
+
+        <div class="show-card-body">
+
+            <!-- Customer Info -->
+            <div class="info-section">
+                <div class="info-section-title"><i class="fas fa-user"></i> Customer Information</div>
+                <div class="fields-grid-3">
+                    <div class="field-item">
+                        <label>Customer Name</label>
+                        <div class="field-value" style="font-weight:600;">{{services.message_show.name|default:"N/A" }}</div>
+                    </div>
+                    <div class="field-item">
+                        <label>Email </label>
+                        <div class="field-value mono">{{ services.message_show.email|default:"N/A" }}</div>
+                    </div>
+
+                    <div class="field-item">
+                        <label>Post Date</label>
+                        <div class="field-value mono">{{ services.message_show.created_at|date:"d-m-Y"|default:"N/A" }}
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <label>Message Subject</label>
+                        <div class="field-value">{{ services.message_show.subject|default:"N/A" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services & Cost -->
+            <div class="info-section">
+                <div class="info-section-title"><i class="fas fa-message"></i> Message</div>
+                <div class="fields-grid">
+                    <div class="field-item" style="width: 100%;">
+                        <label> Message Details </label>
+                        <div class="field-value" style="font-size:13px;color:var(--text-2);">{{services.message_show.message|default:"No notes provided" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment & Status -->
+            <div class="info-section">
+                <div class="info-section-title"><i class="fas fa-toggle-on"></i> Status</div>
+                <div class="fields-grid-3">
+                    <div class="field-item">
+                        <label>Message Read</label>
+                        <div class="field-value" style="background:transparent;border:none;padding:0;">
+
+                            {% if services.message_show.is_read == False %}
+                            <span class="status-badge status-pending">Unread</span>
+                            {% else %}
+                            <span class="status-badge status-completed">Read</span>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer actions -->
+        <div class="show-card-footer">
+            <a href="{% url 'servicesite-message' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Messages
+            </a>
+            <a href="{% url 'servicesite-message-edit' services.message_show.id %}" class="btn btn-primary">
+                <i class="fas fa-pen"></i> Edit Message
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

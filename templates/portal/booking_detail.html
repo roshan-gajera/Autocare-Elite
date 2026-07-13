@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Details | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge-pending    { background: #fef3c7; color: #92400e; }
+    .badge-processing   { background: #dbeafe; color: #1e40af; }
+    .badge-completed  { background: #dcfce7; color: #166534; }
+    .badge-cancelled  { background: #fee2e2; color: #991b1b; }
+    .badge-confirmed {
+            background: #f3e8ff;
+            color: #6f42c1;
+    }
+
+    .bd-section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .bd-info-box {
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+
+    .bd-info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.87rem;
+        color: var(--text-body);
+    }
+
+    .bd-info-row strong {
+        color: var(--text-heading);
+        font-weight: 600;
+        min-width: 58px;
+    }
+
+    .bd-side-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 1.2rem 1.3rem;
+        animation: fadeSlideUp 0.4s ease both;
+    }
+
+    .bd-side-card + .bd-side-card {
+        margin-top: 1rem;
+    }
+
+    .bd-action-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.87rem;
+        font-weight: 700;
+        border-radius: 11px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    }
+
+    .bd-action-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.92;
+    }
+
+    .bd-chip {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid #bfdbfe;
+        margin: 0.15rem 0.2rem 0.15rem 0;
+    }
+
+    @media (max-width: 860px) {
+        .bd-layout { grid-template-columns: 1fr !important; }
+    }
+
+    @media (max-width: 560px) {
+        .bd-customer-grid { grid-template-columns: 1fr !important; }
+    }
+</style>
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; animation: fadeSlideUp 0.35s ease both;">
+    <div>
+        <p style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.3rem;">
+            <i class="fas fa-file-alt" style="margin-right: 0.3rem;"></i>Service Order
+        </p>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin: 0;">Booking Details</h1>
+    </div>
+    <a href="{% url 'service-order' %}"
+       style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+        <i class="fas fa-arrow-left"></i> Back to Order
+    </a>
+</div>
+
+<!-- Main layout -->
+<div class="bd-layout" style="display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start;">
+
+    <!-- ── LEFT: Main Details ───────────────────────────────── -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.05s;">
+
+        <!-- Card top accent + services -->
+        <div style="padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border);">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.5rem;">Services Booked</p>
+                    <div>
+                        {% for service in booking.services.all %}
+                        <span class="bd-chip">{{ service.title }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+
+        <div style="padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1.5rem;">
+
+            <!-- Customer + Vehicle row -->
+            <div class="bd-customer-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+
+                <!-- Customer Info -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-user" style="color: var(--accent);"></i> Customer Information
+                    </p>
+                    <div class="bd-info-box">
+                        <div class="bd-info-row">
+                            <i class="fas fa-user-circle" style="color: var(--accent); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Name</strong>
+                            <span>{{ booking.customer_name }}</span>
+                        </div>
+                        <div class="bd-info-row">
+                            <i class="fas fa-phone" style="color: var(--success); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Phone</strong>
+                            <span>{{ booking.customer_phone }}</span>
+                        </div>
+                        <div class="bd-info-row">
+                            <i class="fas fa-envelope" style="color: var(--warning); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Email</strong>
+                            <span style="word-break: break-all;">{{ booking.customer_email }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Info -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-car" style="color: var(--accent);"></i> Vehicle Information
+                    </p>
+                    <div class="bd-info-box" style="height: calc(100% - 1.6rem);">
+                        <div class="bd-info-row">
+                            <i class="fas fa-car-side" style="color: var(--accent); font-size: 0.8rem; flex-shrink:0;"></i>
+                            <strong>Vehicle</strong>
+                            <span>{{ booking.vehicle_info }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment -->
+            <div>
+                <p class="bd-section-label">
+                    <i class="fas fa-calendar-check" style="color: var(--accent);"></i> Appointment Details
+                </p>
+                <div class="bd-info-box" style="flex-direction: row; gap: 2rem; flex-wrap: wrap;">
+                    <div class="bd-info-row">
+                        <i class="fas fa-calendar-alt" style="color: var(--accent); font-size: 0.8rem;"></i>
+                        <strong>Date</strong>
+                        <span>{{ booking.preferred_date }}</span>
+                    </div>
+                    <div class="bd-info-row">
+                        <i class="fas fa-clock" style="color: var(--success); font-size: 0.8rem;"></i>
+                        <strong>Time</strong>
+                        <span>{{ booking.preferred_time }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if booking.additional_notes %}
+            <!-- Notes -->
+            <div>
+                <p class="bd-section-label">
+                    <i class="fas fa-sticky-note" style="color: var(--accent);"></i> Additional Notes
+                </p>
+                <div class="bd-info-box">
+                    <p style="font-size: 0.87rem; color: var(--text-body); line-height: 1.65; margin: 0;">{{ booking.additional_notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cost + Payment row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+
+                <!-- Cost -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-rupee-sign" style="color: var(--accent);"></i> Estimated Cost
+                    </p>
+                    <div class="bd-info-box" style="align-items: flex-start;">
+                        <p style="font-size: 1.45rem; font-weight: 800; color: var(--text-heading); margin: 0; letter-spacing: -0.5px;">
+                            &#8377;{{ booking.total_estimated_cost }}
+                        </p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Total estimated amount</p>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div>
+                    <p class="bd-section-label">
+                        <i class="fas fa-credit-card" style="color: var(--accent);"></i> Payment Status
+                    </p>
+                    <div class="bd-info-box" style="align-items: flex-start;">
+                        {% if booking.is_paid %}
+                        <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 0.45rem 0.85rem;">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                            <span style="font-size: 0.87rem; font-weight: 700; color: #065f46;">Paid Online</span>
+                        </div>
+                        {% else %}
+                        <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 0.45rem 0.85rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                            <span style="font-size: 0.87rem; font-weight: 700; color: #92400e;">Unpaid</span>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.3rem 0 0;">{{ booking.get_payment_method_display }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── RIGHT: Sidebar ───────────────────────────────────── -->
+    <div>
+
+        <!-- Status card -->
+        <div class="bd-side-card" style="animation-delay: 0.1s;">
+            <p class="bd-section-label" style="margin-bottom: 0.75rem;">
+                <i class="fas fa-tasks" style="color: var(--accent);"></i> Booking Status
+            </p>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border);">
+                <span class="badge badge-{{ booking.status|default:'pending' }}"
+                      style="font-size: 0.9rem; padding: 0.5rem 1.25rem;">
+                    {{ booking.status }}
+                </span>
+            </div>
+        </div>
+
+        <!-- OTP card -->
+        <div class="bd-side-card" style="animation-delay: 0.15s;">
+            <p class="bd-section-label" style="margin-bottom: 0.75rem;">
+                <i class="fas fa-shield-alt" style="color: var(--accent);"></i> OTP Verification
+            </p>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-main); border-radius: 10px; border: 1px solid var(--border);">
+                {% if booking.otp_verified %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                    <i class="fas fa-check-circle" style="font-size: 1.25rem; color: var(--success);"></i>
+                </div>
+                <p style="font-size: 0.88rem; font-weight: 700; color: var(--success); margin: 0;">Verified</p>
+                {% else %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #fff7ed; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                    <i class="fas fa-clock" style="font-size: 1.25rem; color: var(--warning);"></i>
+                </div>
+                <p style="font-size: 0.88rem; font-weight: 700; color: var(--warning); margin: 0 0 0.35rem;">Pending</p>
+                {% if booking.otp %}
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">
+                    OTP: <strong style="color: var(--text-heading); letter-spacing: 0.1em;">{{ booking.otp }}</strong>
+                </p>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Created card -->
+        <div class="bd-side-card" style="animation-delay: 0.2s;">
+            <p class="bd-section-label" style="margin-bottom: 0.6rem;">
+                <i class="fas fa-calendar-plus" style="color: var(--accent);"></i> Created On
+            </p>
+            <p style="font-size: 0.88rem; font-weight: 600; color: var(--text-heading); margin: 0;">
+                {{ booking.created_at|date:"M d, Y" }}
+            </p>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.2rem 0 0;">
+                {{ booking.created_at|date:"H:i" }}
+            </p>
+        </div>
+
+        <!-- Action buttons -->
+        {% if booking.status not in 'completed,cancelled' %}
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; animation: fadeSlideUp 0.45s ease both; animation-delay: 0.25s;">
+
+            <a href="{% url 'booking_edit' booking.id %}" class="bd-action-btn"
+               style="background: var(--accent); color: white; box-shadow: 0 4px 14px rgba(37,99,235,0.25);">
+                <i class="fas fa-edit"></i> Edit Booking
+            </a>
+
+            {% if booking.status in 'processing' %}
+            {% if not booking.otp_verified and booking.otp %}
+            <a href="{% url 'verify_otp' booking.id %}" class="bd-action-btn"
+               style="background: var(--success); color: white; box-shadow: 0 4px 14px rgba(22,163,74,0.25);">
+                <i class="fas fa-check-circle"></i> Verify OTP
+            </a>
+            {% endif %}
+            {% endif %}
+
+            {% if not booking.is_paid %}
+            <a href="{% url 'pay_online' booking.id %}" class="bd-action-btn"
+               style="background: #635bff; color: white; box-shadow: 0 4px 14px rgba(99,91,255,0.25);">
+                <i class="fab fa-stripe-s"></i> Pay Bill Online
+            </a>
+            {% endif %}
+
+            {% if booking.status not in 'completed,processing,confirmed' %}
+            <a href="{% url 'booking_delete' booking.id %}" class="bd-action-btn"
+               style="background: #fff1f2; color: var(--danger); border: 1.5px solid #fecaca;">
+                <i class="fas fa-ban"></i> Cancel Booking
+            </a>
+            {%  endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

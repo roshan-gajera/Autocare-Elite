@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{ service.title }} | AutoCare Elite{% endblock %}
+
+{% block content %}
+<style>
+    .service-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-radius: 24px;
+        padding: 5rem 3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: -5rem;
+        z-index: 1;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .hero-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #60a5fa;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .booking-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 4rem;
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        position: relative;
+        z-index: 10;
+        margin: 0 auto;
+        max-width: 900px;
+    }
+
+    .form-floating-custom {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .form-floating-custom label {
+        position: absolute;
+        top: -10px;
+        left: 15px;
+        background: white;
+        padding: 0 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        z-index: 5;
+    }
+
+    .premium-input {
+        width: 100%;
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        padding: 1.25rem;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        color: #0f172a;
+        transition: all 0.3s ease;
+    }
+
+    .premium-input:focus {
+        background: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+
+    .premium-input::placeholder {
+        color: #cbd5e1;
+    }
+
+    .service-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .service-options label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: white;
+        border: 2px solid #e2e8f0;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .service-options label:hover {
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    .service-options input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: #2563eb;
+    }
+
+    /* Change style when checkbox is checked - this requires JS or complex CSS, we skip complex CSS for simple checkboxes but the accent color works well */
+
+    .btn-submit {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        padding: 1.5rem;
+        font-size: 1.25rem;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        width: 100%;
+        margin-top: 2rem;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.3), 0 10px 10px -5px rgba(37, 99, 235, 0.2);
+    }
+</style>
+
+<div class="animate-fade" style="padding: 0 1rem;">
+    <!-- Hero Banner -->
+    <div class="service-hero">
+        <div style="position: absolute; top: -50%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(0,0,0,0) 70%); border-radius: 50%;"></div>
+        
+        <div style="max-width: 900px; margin: 0 auto;">
+            <a href="{% url 'portal_service_list' %}" style="color: #94a3b8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 3rem; transition: color 0.2s;">
+                <i class="fas fa-arrow-left"></i> Back to Catalog
+            </a>
+            
+            <div style="display: flex; gap: 3rem; align-items: flex-start;">
+                <div class="hero-icon-wrapper">
+                    <i class="{{ service.icon_class }}"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.1;">{{ service.title }}</h1>
+                    <p style="font-size: 1.15rem; color: #94a3b8; max-width: 600px; line-height: 1.6;">{{ service.description }}</p>
+                    
+                    <div style="margin-top: 2rem; display: inline-flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.1); padding: 0.75rem 1.5rem; border-radius: 9999px;">
+                        <span style="color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; font-weight: 700;">Starting at</span>
+                        <span style="font-size: 1.5rem; color: white; font-weight: 800;">₹{{ service.price_starts_at }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-card">
+        <div style="margin-bottom: 3rem;">
+            <h2 style="font-size: 2rem; color: #0f172a; margin-bottom: 0.5rem;">Secure Your Appointment</h2>
+            <p style="color: #64748b; font-size: 1.05rem;">Enter your vehicle details and select your preferred timeslot.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-floating-custom">
+                    <label>Full Name</label>
+                    <input type="text" name="{{ form.customer_name.html_name }}" class="premium-input" placeholder="e.g. John Smith" required>
+                </div>
+                <div class="form-floating-custom">
+                    <label>Phone Number</label>
+                    <input type="tel" name="{{ form.customer_phone.html_name }}" class="premium-input" placeholder="+91 98765 43210" required>
+                </div>
+            </div>
+
+            <div class="form-floating-custom">
+                <label>Email Address</label>
+                <input type="email" name="{{ form.customer_email.html_name }}" class="premium-input" placeholder="john@company.com" required>
+            </div>
+
+            <div class="form-floating-custom">
+                <label>Vehicle Information</label>
+                <input type="text" name="{{ form.vehicle_info.html_name }}" class="premium-input" placeholder="Make, Model, Year, Plate No." required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-floating-custom">
+                    <label>Date</label>
+                    <input type="date" name="{{ form.preferred_date.html_name }}" class="premium-input" required>
+                </div>
+                <div class="form-floating-custom">
+                    <label>Time</label>
+                    <input type="time" name="{{ form.preferred_time.html_name }}" class="premium-input" required>
+                </div>
+            </div>
+
+            <div class="form-floating-custom">
+                <label>Additional Notes</label>
+                <textarea name="{{ form.additional_notes.html_name }}" class="premium-input" rows="3" placeholder="Any specific issues or requests..."></textarea>
+            </div>
+
+            <div class="form-floating-custom">
+                <label>Payment Preference</label>
+                <select name="{{ form.payment_method.html_name }}" class="premium-input" required style="cursor: pointer;">
+                    <option value="cash">Cash on Service / Offline</option>
+                    <option value="online">Pay Now (Secure Online Checkout)</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <label style="font-weight: 700; color: #0f172a; font-size: 1.1rem; margin-bottom: 0.5rem; display: block;">Select Additional Services</label>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">You can select multiple services to be performed during this appointment.</p>
+                <div class="service-options">
+                    {{ form.services }}
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; padding: 1.5rem; background: #f0fdf4; border-radius: 16px; border: 1px solid #bbf7d0; display: flex; gap: 1.5rem; align-items: center;">
+                <div style="background: #22c55e; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <h4 style="color: #166534; font-size: 1.05rem; margin-bottom: 0.25rem;">Secure OTP Verification</h4>
+                    <p style="color: #15803d; font-size: 0.9rem; margin: 0; line-height: 1.5;">After booking, you'll instantly receive a unique 6-digit OTP on WhatsApp. Share this with our technician only when the service is fully completed.</p>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-calendar-check" style="margin-right: 0.75rem;"></i> Confirm Schedule & Generate OTP
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Style the checkboxes generated by Django
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkboxes = document.querySelectorAll('.service-options input[type="checkbox"]');
+        checkboxes.forEach(box => {
+            if(box.parentElement.tagName === 'LABEL') {
+                box.parentElement.style.display = 'flex';
+                box.parentElement.style.alignItems = 'center';
+                box.parentElement.style.gap = '10px';
+                
+                // Add click effect
+                box.addEventListener('change', function() {
+                    if(this.checked) {
+                        this.parentElement.style.borderColor = '#2563eb';
+                        this.parentElement.style.background = '#eff6ff';
+                    } else {
+                        this.parentElement.style.borderColor = '#e2e8f0';
+                        this.parentElement.style.background = 'white';
+                    }
+                });
+                
+                // Trigger initial state
+                if(box.checked) {
+                    box.parentElement.style.borderColor = '#2563eb';
+                    box.parentElement.style.background = '#eff6ff';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

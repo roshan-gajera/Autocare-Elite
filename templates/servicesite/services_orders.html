@@ -1,0 +1,103 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content {
+        animation: fadeIn .42s ease;
+    }
+</style>
+
+<div class="page-content">
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-wrench"></i></div>
+            <div class="stat-content">
+                <h3>{{ services.total_service|default:"0" }}</h3>
+                <p>Total Service Orders</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-hourglass-half"></i></div>
+            <div class="stat-content">
+                <h3>{{ services.pending_order|default:"0" }}</h3>
+                <p>Pending</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon info"><i class="fas fa-rotate"></i></div>
+            <div class="stat-content">
+                <h3>{{ services.processing_order|default:"0" }}</h3>
+                <p>Processing</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-circle-check"></i></div>
+            <div class="stat-content">
+                <h3>{{ services.completed_order|default:"0" }}</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3><i class="fas fa-wrench"></i> All Service Orders</h3>
+            <span class="badge badge-primary">{{ services.total_service|default:"0" }} Total</span>
+        </div>
+        <div class="card-body">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services.booking %}
+                    <tr>
+                        <td><span class="order-id">#{{ service.id }}</span></td>
+                        <td style="color:var(--text-1);font-weight:600;">{{ service.customer_name }}</td>
+                        <td style="font-family:var(--font-mono);font-size:12px;">+91 {{ service.customer_phone }}</td>
+                        <td style="font-family:var(--font-mono);font-size:12px;white-space:nowrap;">{{ service.preferred_date|date:"d-m-Y" }}</td>
+                        <td style="font-family:var(--font-mono);font-weight:700;color:var(--green);">₹{{service.total_estimated_cost }}</td>
+                        
+                        <td>
+                            <span class="status-badge
+                                {% if service.status == 'pending' %}status-pending
+                                {% elif service.status == 'processing' %}status-processing
+                                {% elif service.status == 'completed' %}status-completed
+                                {% elif service.status == 'cancelled' %}status-cancelled
+                                {% elif service.status == 'confirmed' %}status-confirmed
+                                {% else %}status-{{ service.status }}{% endif %}">
+                                {{ service.status|title }}
+                            </span>
+                        </td>
+                        <td>
+
+                            <span
+                                class="status-badge {% if service.is_paid %}status-completed{% else %}status-pending{% endif %}">
+                                {{ service.is_paid|yesno:"Paid,Unpaid" }}
+                            </span>
+
+                        </td>
+                        <td>
+                            <a href="{% url 'servicesite-serviceorder-show' service.id %}"
+                                class="btn btn-sm btn-secondary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content { animation:fadeIn .42s ease; }
+
+    .show-card {
+        background:#fff; border:1px solid var(--border);
+        border-radius:var(--radius-lg); max-width:940px;
+        margin:0 auto; box-shadow:var(--shadow);
+        overflow:hidden;
+    }
+    .show-card-header {
+        background:var(--bg-raised); border-bottom:1px solid var(--border);
+        padding:22px 32px; display:flex; align-items:center;
+        justify-content:space-between; flex-wrap:wrap; gap:12px;
+    }
+    .show-card-header h2 {
+        font-size:19px; font-weight:800; color:var(--text-1);
+        display:flex; align-items:center; gap:10px;
+    }
+    .show-card-header h2 i { color:var(--coral); }
+    .order-badge {
+        font-family:var(--font-mono); font-size:13px; font-weight:600;
+        color:var(--navy); background:var(--navy-light);
+        border:1px solid #c5cadf; border-radius:8px; padding:5px 13px;
+    }
+    .show-card-body { padding:28px 32px; }
+
+    /* Section block */
+    .info-section { margin-bottom:26px; }
+    .info-section:last-child { margin-bottom:0; }
+
+    .info-section-title {
+        font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+        letter-spacing:1.5px; color:var(--text-3); display:flex;
+        align-items:center; gap:8px; margin-bottom:14px;
+    }
+    .info-section-title i { color:var(--coral); font-size:11px; }
+    .info-section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* Grid for fields */
+    .fields-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .fields-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .col-2 { grid-column:span 2; }
+    .col-3 { grid-column:span 3; }
+
+    .field-item label {
+        font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+        letter-spacing:1px; color:var(--text-3); display:block; margin-bottom:5px;
+    }
+
+    /* Services tags area */
+    .services-tags {
+        background:var(--bg-input); border:1.5px solid var(--border);
+        border-radius:var(--radius); padding:12px 14px; min-height:44px;
+        display:flex; flex-wrap:wrap; gap:7px; align-items:flex-start;
+    }
+    .service-tag {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:4px 11px; background:var(--coral-light);
+        border:1px solid #f5c4af; border-radius:20px;
+        font-size:12px; color:var(--coral-dim); font-weight:600;
+    }
+    .service-tag i { font-size:10px; }
+
+    .show-card-footer {
+        padding:18px 32px 24px; border-top:1px solid var(--border);
+        display:flex; gap:10px; justify-content:flex-end;
+        background:var(--bg-raised);
+    }
+
+    @media (max-width:680px) {
+        .show-card-body { padding:20px 18px; }
+        .show-card-header { padding:18px; }
+        .fields-grid-2, .fields-grid-3 { grid-template-columns:1fr; }
+        .col-2, .col-3 { grid-column:span 1; }
+        .show-card-footer { padding:14px 18px 20px; }
+    }
+</style>
+
+<div class="page-content">
+<div class="show-card">
+
+    <!-- Header -->
+    <div class="show-card-header">
+        <h2><i class="fas fa-receipt"></i> Order Details</h2>
+        <span class="order-badge"># {{ services.order_show.id }}</span>
+    </div>
+
+    <div class="show-card-body">
+
+        <!-- Customer Info -->
+        <div class="info-section">
+            <div class="info-section-title"><i class="fas fa-user"></i> Customer Information</div>
+            <div class="fields-grid-3">
+                <div class="field-item">
+                    <label>Customer Name</label>
+                    <div class="field-value" style="font-weight:600;">{{ services.order_show.customer_name|default:"N/A" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Phone Number</label>
+                    <div class="field-value mono">{{ services.order_show.customer_phone|default:"N/A" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Email Address</label>
+                    <div class="field-value mono" style="font-size:12.5px;">{{ services.order_show.customer_email|default:"N/A" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Vehicle Info</label>
+                    <div class="field-value">{{ services.order_show.vehicle_info|default:"N/A" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Preferred Date</label>
+                    <div class="field-value mono">{{ services.order_show.preferred_date|date:"d-m-Y"|default:"N/A" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Preferred Time</label>
+                    <div class="field-value mono">{{ services.order_show.preferred_time|default:"N/A" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services & Cost -->
+        <div class="info-section">
+            <div class="info-section-title"><i class="fas fa-wrench"></i> Services & Cost</div>
+            <div class="fields-grid-2">
+                <div class="field-item col-2">
+                    <label>Services Booked</label>
+                    <div class="services-tags">
+                        {% for s in services.order_show.services.all %}
+                        <span class="service-tag"><i class="fas fa-wrench"></i>{{ s.title }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="field-item">
+                    <label>Total Estimated Cost</label>
+                    <div class="field-value price">₹{{ services.order_show.total_estimated_cost|default:"0" }}</div>
+                </div>
+                <div class="field-item">
+                    <label>Additional Notes</label>
+                    <div class="field-value" style="font-size:13px;color:var(--text-2);">{{ services.order_show.additional_notes|default:"No notes provided" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment & Status -->
+        <div class="info-section">
+            <div class="info-section-title"><i class="fas fa-credit-card"></i> Payment & Status</div>
+            <div class="fields-grid-3">
+                <div class="field-item">
+                    <label>Order Status</label>
+                    <div class="field-value" style="background:transparent;border:none;padding:0;">
+                        <span class="status-badge
+                            {% if services.order_show.status == 'pending' %}status-pending
+                            {% elif services.order_show.status == 'processing' %}status-processing
+                            {% elif services.order_show.status == 'completed' %}status-completed
+                            {% elif services.order_show.status == 'cancelled' %}status-cancelled
+                            {% elif services.order_show.status == 'confirmed' %}status-confirmed
+                            {% else %}status-{{ services.order_show.status }}{% endif %}">
+                            {{ services.order_show.status|title|default:"Pending" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <label>Payment Status</label>
+                    <div class="field-value" style="background:transparent;border:none;padding:0;">
+                        <span class="status-badge {% if services.order_show.is_paid %}status-completed{% else %}status-pending{% endif %}">
+                            {{ services.order_show.is_paid|yesno:"Paid,Unpaid" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <label>OTP Verified</label>
+                    <div class="field-value" style="background:transparent;border:none;padding:0;">
+                        <span class="status-badge {% if services.order_show.otp_verified %}status-completed{% else %}status-pending{% endif %}">
+                            {{ services.order_show.otp_verified|yesno:"Verified,Pending" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <label>Payment Method</label>
+                    <div class="field-value mono">{{ services.order_show.payment_method|upper|default:"N/A" }}</div>
+                </div>
+                <div class="field-item col-2">
+                    <label>Payment / Transaction ID</label>
+                    <div class="field-value mono" style="font-size:12px;word-break:break-all;">{{ services.order_show.stripe_payment_intent_id|default:"Not yet paid" }}</div>
+                </div>
+                <div class="field-item col-3">
+                    <label>OTP Code</label>
+                    <div class="field-value otp">{{ services.order_show.otp|default:"——" }}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer actions -->
+    <div class="show-card-footer">
+        <a href="{% url 'servicesite-serviceorder' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Orders
+        </a>
+        <a href="{% url 'servicesite-serviceorder-edit' services.order_show.id %}" class="btn btn-primary">
+            <i class="fas fa-pen"></i> Edit Order
+        </a>
+    </div>
+
+</div>
+</div>
+{% endblock %}

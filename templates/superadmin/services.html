@@ -1,0 +1,71 @@
+{% extends 'superadmin/dashboard.html' %}
+
+{% block content %}
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div>
+      <div class="tb-title">All Services</div>
+      <div class="tb-bread">
+        <span>Admin</span><span class="sep">/</span><span class="cur">All Services</span>
+      </div>
+    </div>
+
+  </header>
+
+  <div class="page fade-up">
+    <div class="ph">
+      <div>
+        <h1>All Services</h1>
+        <p>Manage and control all platform services.</p>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><i class="fas fa-wrench"></i> Services List</div>
+
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Phone Number</th>
+              <th>Shop Name</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for service in service.all_service %}
+            <tr>
+              <td class="td-m" style="font-weight: bolder;">{{service.id}}</td>
+              <td>
+                <div class="td-h">{{ service.customer_name|capfirst }}</div>
+              </td>
+              <td style="font-weight: bold;"> +91 {{ service.customer_phone }}</td>
+              <td style="font-weight: bold;"> {{ service.shop|capfirst }}</td>
+              
+              <td style="font-weight: bold;">{{ service.preferred_date|date:"d-m-Y" }}</td>
+              <td><span class="badge {% if service.is_paid %}b-green{% else %}b-red{% endif %}">{{ service.is_paid|yesno:"Paid,Unpaid" }}</span></td>
+              <td>
+                <div class="t-actions">
+                      <a class="btn btn-danger btn-sm btn-icon" href="{% url 'admin-delete-service' service.id %}"><i
+                      class="fas fa-trash"></i></a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

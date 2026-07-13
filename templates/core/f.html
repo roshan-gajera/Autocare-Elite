@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In | AutoCare Pro{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">send</button>
+</form>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Towing Requests | AutoCare Pro{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header fade-up">
+    <div>
+        <h1>My Towing Requests</h1>
+        <p>View and track all your roadside and towing service requests.</p>
+    </div>
+    <a href="{% url 'towing_request' %}" class="btn btn-primary">
+        <i class="fas fa-plus" style="margin-right:0.4rem;"></i>Request Tow
+    </a>
+</div>
+
+<!-- Summary pills -->
+<div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.5rem;" class="fade-up">
+    <span class="badge badge-pending"    style="font-size:0.78rem; padding:0.3rem 0.75rem;">Pending: {{ services.pending_order|default:"0" }}</span>
+    <span class="badge badge-dispatched" style="font-size:0.78rem; padding:0.3rem 0.75rem;">Dispatched: {{ services.processing_order|default:"0" }}</span>
+    <span class="badge badge-completed"  style="font-size:0.78rem; padding:0.3rem 0.75rem;">Completed: {{ services.completed_order|default:"0" }}</span>
+    <span class="badge badge-cancelled"  style="font-size:0.78rem; padding:0.3rem 0.75rem;">Cancelled: {{ services.cancelled_order|default:"0" }}</span>
+</div>
+
+<!-- Cards -->
+<div class="tow-grid" id="tow-list">
+    {% for towing in services.towing_order %}
+    <div class="tow-card fade-up">
+
+        <div class="tow-card-top">
+            <div>
+                <div class="tow-vehicle">{{ towing.vehicle_details|default:"Vehicle" }} </div>
+                <div class="tow-id"> {{ towing.requested_at|date:"d-m-Y" }}</div>
+            </div>
+            <span class="badge badge-{{ towing.status|default:'pending' }}">
+                {{ towing.status|default:"Pending" }}
+            </span>
+        </div>
+
+        <div class="tow-card-body">
+            <!-- Route -->
+            <div class="tow-route">
+                <div class="tow-loc">
+                    <i class="fas fa-map-marker-alt" style="color:var(--danger);"></i>
+                    <span>{{ towing.pickup_address|default:"Pickup location not set" }}</span>
+                </div>
+                <div class="tow-loc-line" style="margin-left:0.55rem;"></div>
+                <div class="tow-loc">
+                    <i class="fas fa-flag-checkered" style="color:var(--success);"></i>
+                    <span>{{ towing.dropoff_location|default:"Ahmedabad" }}</span>
+                </div>
+            </div>
+
+            <!-- Info rows -->
+            
+            <div class="tow-info-row">
+                <i class="fas fa-user-tie" style="color:var(--accent);"></i>
+                Driver: <strong>{{ towing.driver_name|default:"patel"  }}</strong>
+            </div>
+            
+            <div class="tow-info-row">
+                <i class="fas fa-phone" style="color:var(--success);"></i>
+                {{ towing.driver_phone|default:"1234567890" }}
+            </div>
+        
+        </div>
+
+        <div class="tow-card-footer">
+            <span class="tow-cost">₹{{ towing.cost|default:"1200"|floatformat:2 }}</span>
+            <div style="display:flex; gap:0.5rem;">
+                {% if towing.status == 'pending' %}
+                <a href="" class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.78rem; color:var(--danger);">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                {% endif %}
+                <a href="{% url 'towing_detail' towing.id %}" class="btn btn-outline" style="padding:0.35rem 0.75rem; font-size:0.78rem;">
+                    <i class="fas fa-eye"></i> Details
+                </a>
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+    <div class="empty-state" style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:16px;">
+        <i class="fas fa-truck"></i>
+        <p>You have no towing requests yet.</p>
+        <a href="{% url 'towing_request' %}" class="btn btn-primary">Request a Tow</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

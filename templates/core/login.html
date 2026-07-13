@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In | AutoCare Pro{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    @keyframes floatIcon {
+        0%, 100% { transform: translateY(0px); }
+        50%       { transform: translateY(-6px); }
+    }
+
+    .login-page-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: var(--bg-main, #f4f6fb);
+    }
+
+    .auth-split {
+        display: grid;
+        grid-template-columns: 1fr 440px;
+        width: 100%;
+        max-width: 900px;
+        min-height: 540px;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(37, 99, 235, 0.10), 0 4px 16px rgba(0,0,0,0.06);
+        animation: fadeSlideUp .45s ease both;
+    }
+
+    /* ── LEFT brand panel ── */
+    .auth-brand {
+        background: linear-gradient(145deg, var(--accent, #2563eb) 0%, #1d4ed8 100%);
+        padding: 52px 46px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+    .auth-brand::before {
+        content: '';
+        position: absolute; right: -70px; bottom: -70px;
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(96,165,250,.20) 0%, transparent 65%);
+        border-radius: 50%;
+    }
+    .auth-brand::after {
+        content: '';
+        position: absolute; right: 10px; bottom: 20px;
+        width: 380px; height: 220px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 280'%3E%3Cg opacity='.08' fill='%23ffffff'%3E%3Crect x='60' y='140' width='380' height='78' rx='18'/%3E%3Cpath d='M148 140 C162 92 205 74 250 72 C295 74 338 92 352 140Z'/%3E%3Crect x='162' y='88' width='72' height='50' rx='7' opacity='.4'/%3E%3Crect x='244' y='88' width='100' height='50' rx='7' opacity='.4'/%3E%3Ccircle cx='142' cy='218' r='36'/%3E%3Ccircle cx='358' cy='218' r='36'/%3E%3Ccircle cx='142' cy='218' r='19' fill='%231d4ed8'/%3E%3Ccircle cx='358' cy='218' r='19' fill='%231d4ed8'/%3E%3C/g%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: center; background-size: contain;
+        pointer-events: none;
+    }
+
+    .brand-logo {
+        display: flex; align-items: center; gap: 12px;
+        z-index: 2; position: relative;
+    }
+    .brand-logo-icon {
+        width: 46px; height: 46px; border-radius: 14px;
+        background: rgba(255,255,255,.15);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; color: #fff;
+        animation: floatIcon 3s ease-in-out infinite;
+    }
+    .brand-logo-text {
+        font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.4px;
+    }
+    .brand-logo-text em { color: #bfdbfe; font-style: normal; }
+
+    .brand-body { position: relative; z-index: 2; }
+    .brand-body h2 {
+        font-size: 34px; font-weight: 800; color: #fff;
+        line-height: 1.15; letter-spacing: -1px; margin: 0 0 14px;
+    }
+    .brand-body h2 span { color: #bfdbfe; }
+    .brand-body p {
+        font-size: 14px; color: rgba(255,255,255,.6);
+        line-height: 1.75; max-width: 280px; margin: 0;
+    }
+
+    .brand-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .brand-pill {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 11px; font-weight: 600;
+        padding: 5px 12px; border-radius: 20px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.15);
+        color: rgba(255,255,255,.75);
+    }
+    .brand-pill i { color: #bfdbfe; font-size: 10px; }
+
+    .brand-footer {
+        font-size: 10px; color: rgba(255,255,255,.28);
+        z-index: 2; position: relative;
+    }
+
+    /* ── RIGHT form panel ── */
+    .auth-form-panel {
+        padding: 50px 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #fff;
+    }
+
+    .auth-form-title {
+        font-size: 26px; font-weight: 800;
+        color: var(--text-heading, #0f172a);
+        margin: 0 0 4px; letter-spacing: -0.5px;
+    }
+    .auth-form-sub {
+        font-size: 13px; color: var(--text-muted, #64748b);
+        margin: 0 0 28px;
+    }
+
+    /* Alert */
+    .auth-alert {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 12px 14px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-left: 4px solid var(--accent, #2563eb);
+        border-radius: 11px;
+        margin-bottom: 20px;
+        animation: fadeIn .3s ease;
+    }
+    .auth-alert i { color: var(--accent, #2563eb); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .auth-alert span { font-size: 13px; color: var(--accent, #2563eb); font-weight: 600; line-height: 1.5; }
+
+    /* Form groups */
+    .auth-form-group { margin-bottom: 18px; }
+    .auth-form-group .field-label {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 7px;
+    }
+    .auth-form-group .field-label-text {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 11.5px; font-weight: 700;
+        color: var(--text-muted, #64748b);
+        text-transform: uppercase; letter-spacing: .6px;
+    }
+    .auth-form-group .field-label-text i {
+        color: var(--accent, #2563eb); font-size: 10px;
+    }
+    .forgot-link {
+        font-size: 12px; color: var(--accent, #2563eb);
+        font-weight: 600; text-decoration: none;
+        transition: opacity .2s;
+    }
+    .forgot-link:hover { opacity: .7; }
+
+    /* Input with icon */
+    .field-wrap {
+        position: relative;
+    }
+    .field-wrap-icon {
+        position: absolute; left: 14px; top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px; color: #b0bac5;
+        pointer-events: none; transition: color 0.2s;
+    }
+    .field-wrap:focus-within .field-wrap-icon {
+        color: var(--accent, #2563eb);
+    }
+    .auth-input {
+        width: 100%;
+        padding: 11px 14px 11px 40px;
+        border: 1.5px solid var(--border, #e2e8f0);
+        border-radius: 11px;
+        font-size: 14px;
+        font-family: inherit;
+        color: var(--text-heading, #0f172a);
+        background: var(--bg-main, #f8fafc);
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .auth-input:focus {
+        border-color: var(--accent, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        background: #fff;
+    }
+    .auth-input::placeholder { color: #b0bac5; }
+
+    /* Submit button */
+    .btn-login {
+        width: 100%;
+        padding: 13px;
+        font-size: 14px; font-weight: 700;
+        border: none; border-radius: 12px;
+        background: var(--accent, #2563eb);
+        color: #fff; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        font-family: inherit;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.28);
+        transition: transform .18s, box-shadow .18s, background .18s;
+        margin-top: 6px;
+    }
+    .btn-login:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(37, 99, 235, 0.38);
+    }
+
+    /* Divider */
+    .su-divider {
+        display: flex; align-items: center; gap: 12px;
+        margin: 22px 0 16px;
+        color: var(--text-muted, #94a3b8);
+        font-size: 12px;
+    }
+    .su-divider::before,
+    .su-divider::after {
+        content: ''; flex: 1; height: 1px;
+        background: var(--border, #e2e8f0);
+    }
+
+    /* Register link */
+    .btn-register {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; padding: 11px;
+        font-size: 13px; font-weight: 700;
+        border-radius: 12px;
+        border: 1.5px solid var(--border, #e2e8f0);
+        background: #fff;
+        color: var(--text-heading, #0f172a);
+        text-decoration: none;
+        box-sizing: border-box;
+        transition: border-color .18s, color .18s;
+    }
+    .btn-register:hover {
+        border-color: var(--accent, #2563eb);
+        color: var(--accent, #2563eb);
+    }
+
+    /* Footer note */
+    .login-footer-note {
+        text-align: center;
+        font-size: 11.5px;
+        color: var(--text-muted, #94a3b8);
+        margin-top: 20px;
+    }
+    .login-footer-note a {
+        color: var(--accent, #2563eb);
+        text-decoration: none; font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+        .auth-split { grid-template-columns: 1fr; }
+        .auth-brand { display: none; }
+        .auth-form-panel { padding: 36px 26px; }
+        .login-page-wrapper { padding: 24px 16px; }
+    }
+</style>
+
+<div class="login-page-wrapper">
+    <div class="auth-split">
+
+        <!-- LEFT: Brand Panel -->
+        <div class="auth-brand">
+            <div class="brand-logo">
+                <div class="brand-logo-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="brand-logo-text">AutoCare <em>Pro</em></div>
+            </div>
+
+            <div class="brand-body">
+                <h2>Control everything.<br><span>Your way.</span></h2>
+<p>Dedicated access for users, service sites, and admins — all from a single intelligent system.</p>
+                <div class="brand-pills">
+                    <div class="brand-pill"><i class="fas fa-wrench"></i> Service Orders</div>
+                    <div class="brand-pill"><i class="fas fa-truck"></i> Towing</div>
+                    <div class="brand-pill"><i class="fas fa-inbox"></i> Messages</div>
+                    <div class="brand-pill"><i class="fas fa-gauge-high"></i> Dashboard</div>
+                </div>
+            </div>
+
+            <div class="brand-footer">© 2026 AutoCare Pro &nbsp;·&nbsp; Admin Panel</div>
+        </div>
+
+        <!-- RIGHT: Form Panel -->
+        <div class="auth-form-panel">
+            <div class="auth-form-title">Welcome back</div>
+            <div class="auth-form-sub">Sign in to your AutoCare Pro account.</div>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="auth-alert">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            <div class="auth-alert">
+                <i class="fas fa-info-circle"></i>
+                <span>{% for error in form.non_field_errors %}{{ error }}{% endfor %}</span>
+            </div>
+            {% endif %}
+
+            {% if error %}
+            <div class="auth-alert">
+                <i class="fas fa-info-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div class="auth-form-group">
+                    <div class="field-label">
+                        <span class="field-label-text">
+                            <i class="fas fa-user"></i> Username
+                        </span>
+                    </div>
+                    <div class="field-wrap">
+                        <i class="field-wrap-icon fas fa-user"></i>
+                        <input type="text" name="username" id="id_username"
+                               class="auth-input"
+                               placeholder="Enter your username"
+                               autocomplete="username">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="auth-form-group">
+                    <div class="field-label">
+                        <span class="field-label-text">
+                            <i class="fas fa-lock"></i> Password
+                        </span>
+                        <a href="{% url 'forget-password' %}" class="forgot-link">Forgot password?</a>
+                    </div>
+                    <div class="field-wrap">
+                        <i class="field-wrap-icon fas fa-lock"></i>
+                        <input type="password" name="password" id="id_password"
+                        class="auth-input"
+                        placeholder="••••••••"
+                        autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Sign In to Dashboard
+                </button>
+            </form>
+
+            <div class="su-divider">new to AutoCare Pro?</div>
+
+            <a href="{% url 'signup' %}" class="btn-register">
+                <i class="fas fa-user-plus"></i> Create an Account
+            </a>
+
+            <p class="login-footer-note">
+                Protected by AutoCare Pro &nbsp;·&nbsp;
+                <a href="#">Privacy Policy</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

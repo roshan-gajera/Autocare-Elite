@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shakeIn {
+        0%   { transform: scale(0.5) rotate(-15deg); opacity: 0; }
+        60%  { transform: scale(1.2) rotate(6deg); opacity: 1; }
+        80%  { transform: scale(0.95) rotate(-3deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes pulseRing {
+        0%   { transform: scale(0.85); opacity: 0.5; }
+        100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    .danger-icon-wrap {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .danger-icon-wrap::before,
+    .danger-icon-wrap::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(220, 38, 38, 0.15);
+        animation: pulseRing 2s ease-out infinite;
+    }
+
+    .danger-icon-wrap::after {
+        animation-delay: 0.8s;
+    }
+
+    .danger-icon-inner {
+        position: relative;
+        z-index: 1;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+        animation: shakeIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .danger-icon-inner i {
+        font-size: 1.7rem;
+        color: white;
+    }
+
+    .confirm-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        max-width: 520px;
+        margin: 0 auto;
+        overflow: hidden;
+        animation: fadeSlideUp 0.45s ease both;
+    }
+
+    .confirm-btn-danger {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.82rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: white;
+        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+        transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+        text-decoration: none;
+    }
+
+    .confirm-btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    .confirm-btn-back {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.82rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        border-radius: 12px;
+        border: 1.5px solid var(--border);
+        cursor: pointer;
+        background: var(--bg-card);
+        color: var(--text-heading);
+        transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+        text-decoration: none;
+    }
+
+    .confirm-btn-back:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow);
+        color: var(--accent);
+    }
+</style>
+
+<div class="confirm-card">
+
+    <!-- Red top accent bar -->
+    <div style="height: 4px; background: linear-gradient(90deg, #ef4444, #b91c1c);"></div>
+
+    <!-- Main content -->
+    <div style="padding: 2.5rem 2rem 2rem; text-align: center;">
+
+        <!-- Animated warning icon -->
+        <div class="danger-icon-wrap">
+            <div class="danger-icon-inner">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+        </div>
+
+        <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-heading); margin-bottom: 0.5rem;">
+            Confirm Cancellation
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; max-width: 340px; margin: 0 auto 1.75rem;">
+            Are you sure you want to cancel this <strong style="color: var(--text-heading);">{{ type }}</strong>? This action cannot be undone.
+        </p>
+
+        <!-- Details box -->
+        <div style="background: #fff1f2; border: 1px solid #fecaca; border-radius: 12px; padding: 1.1rem 1.3rem; margin-bottom: 2rem; text-align: left;">
+            <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #991b1b; margin-bottom: 0.5rem;">
+                <i class="fas fa-file-alt" style="margin-right: 0.3rem;"></i>{{ type }} Details
+            </p>
+            <p style="font-size: 0.92rem; font-weight: 600; color: var(--text-heading); margin: 0;">{{ object }}</p>
+        </div>
+
+        <!-- Action buttons -->
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+                <button type="submit" class="confirm-btn-danger">
+                    <i class="fas fa-ban"></i> Yes, Cancel It
+                </button>
+                <a href="javascript:history.back()" class="confirm-btn-back">
+                    <i class="fas fa-arrow-left"></i> No, Go Back
+                </a>
+            </div>
+        </form>
+
+        <!-- Warning note -->
+        <div style="display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-muted);">
+            <i class="fas fa-lock" style="font-size: 0.7rem; color: var(--danger); opacity: 0.6;"></i>
+            This action is permanent and cannot be reversed.
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

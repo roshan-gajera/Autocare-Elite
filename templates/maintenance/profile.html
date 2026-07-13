@@ -1,0 +1,541 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile | AutoCare Pro{% endblock %}
+{% block content %}
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+        background: #f1f5f9;
+    }
+
+    .page {
+        background: #f1f5f9;
+        min-height: 100vh;
+        padding: 0 0 2rem;
+    }
+
+
+
+    .page-title-row {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title-icon {
+        width: 40px;
+        height: 40px;
+        background: #2563eb;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .page-subtitle {
+        font-size: .82rem;
+        color: #64748b;
+        margin-top: 1px;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: .9rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+    }
+
+    .card-header-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .82rem;
+        flex-shrink: 0;
+    }
+
+    .card-header-icon.blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .card-header-icon.purple {
+        background: #f5f3ff;
+        color: #7c3aed;
+    }
+
+    .card-header-title {
+        font-weight: 700;
+        font-size: .88rem;
+        color: #1e293b;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .avatar-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.4rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 3px solid #bfdbfe;
+    }
+
+    .avatar-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .avatar-email {
+        font-size: .8rem;
+        color: #64748b;
+        margin-top: 2px;
+    }
+
+    .avatar-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 6px;
+        background: #eff6ff;
+        color: #1e40af;
+        font-size: .72rem;
+        font-weight: 600;
+        padding: .18rem .55rem;
+        border-radius: 20px;
+        border: 1px solid #bfdbfe;
+    }
+
+    .avatar-badge .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #22c55e;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media(max-width:520px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-field.full {
+        grid-column: 1/-1;
+    }
+
+    .form-label {
+        display: block;
+        font-size: .78rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: .35rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: .6rem .85rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: .88rem;
+        color: #1e293b;
+        outline: none;
+        background: #fff;
+        transition: border-color .2s;
+    }
+
+    .form-input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .form-input:disabled {
+        background: #f8fafc;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    .form-hint {
+        font-size: .95rem;
+        font-weight: bold;
+        color: #94a3b8;
+        margin-top: .3rem;
+    }
+
+    .pw-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media(max-width:520px) {
+        .pw-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .btn-row {
+        display: flex;
+        gap: .75rem;
+        justify-content: flex-end;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-primary {
+        padding: .6rem 1.4rem;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-ghost {
+        padding: .6rem 1.1rem;
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .btn-ghost:hover {
+        background: #f1f5f9;
+    }
+
+    .shop-select {
+        width: 100%;
+        padding: .65rem .85rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: .88rem;
+        color: #1e293b;
+        outline: none;
+        background: #fff;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .85rem center;
+        cursor: pointer;
+        transition: border-color .2s;
+    }
+
+    .shop-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .shop-preview-box {
+        display: none;
+        margin-top: .85rem;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        padding: .8rem 1rem;
+        flex-direction: row;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .shop-preview-box.show {
+        display: flex;
+    }
+
+    .shop-preview-icon {
+        width: 36px;
+        height: 36px;
+        background: #2563eb;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: .85rem;
+        flex-shrink: 0;
+    }
+
+    .shop-preview-name {
+        font-weight: 700;
+        font-size: .88rem;
+        color: #1e40af;
+    }
+
+    .shop-preview-addr {
+        font-size: .76rem;
+        color: #3b82f6;
+        margin-top: 1px;
+    }
+
+    .current-shop-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #dcfce7;
+        color: #14532d;
+        font-size: .75rem;
+        font-weight: 600;
+        padding: .22rem .6rem;
+        border-radius: 20px;
+        margin-left: .5rem;
+    }
+
+    .toast {
+        display: none;
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        background: #1e293b;
+        color: #fff;
+        padding: .6rem 1.1rem;
+        border-radius: 10px;
+        font-size: .82rem;
+        font-weight: 500;
+        z-index: 999;
+    }
+
+    .toast.show {
+        display: block;
+        animation: slideUp .22s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .section-divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 1rem 0;
+    }
+
+    .danger-zone {
+        border: 1px solid #fecaca;
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+
+    .danger-header {
+        background: #fff1f2;
+        padding: .9rem 1.25rem;
+        border-bottom: 1px solid #fecaca;
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+    }
+
+    .danger-header-icon {
+        width: 30px;
+        height: 30px;
+        background: #fee2e2;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ef4444;
+        font-size: .82rem;
+    }
+
+    .danger-title {
+        font-weight: 700;
+        font-size: .88rem;
+        color: #991b1b;
+    }
+
+    .danger-body {
+        padding: 1.1rem 1.25rem;
+        background: #fff;
+    }
+
+    .danger-desc {
+        font-size: .83rem;
+        color: #64748b;
+        margin-bottom: .9rem;
+    }
+
+    .btn-danger {
+        padding: .55rem 1.1rem;
+        background: #ef4444;
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="page">
+
+
+    <div class="container">
+
+        <div class="page-title-row">
+            <div class="page-title-icon"><i class="fas fa-user-cog"></i></div>
+            <div>
+                <div class="page-title">My Profile</div>
+                <div class="page-subtitle">Manage your account details and shop assignment.</div>
+            </div>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon blue"><i class="fas fa-user"></i></div>
+                <div class="card-header-title">Account Information</div>
+            </div>
+            <div class="card-body">
+
+                <div class="avatar-row">
+                    <div class="avatar" id="avatarCircle">{{user.username|slice:":1"|upper}}</div>
+                    <div class="avatar-meta">
+                        <div class="avatar-name" id="displayName">{{user.username}}</div>
+                        <div class="avatar-email" id="displayEmail">{{user.email}}</div>
+                        <div class="avatar-badge"><span class="dot"></span> Active Account</div>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label class="form-label">Username</label>
+                            {{services.u_form.username}}
+
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Email Address</label>
+                            {{services.u_form.email}}
+
+                        </div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn-primary"><i class="fas fa-check"
+                                style="font-size:.78rem;margin-right:5px;"></i> Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Shop Selection -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon purple"><i class="fas fa-store"></i></div>
+                <div class="card-header-title">Shop Assignment
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="select_shop">
+                    <div class="form-field full" style="margin-bottom:0;">
+                        <label class="form-label">Select Your Shop</label>
+                        {{services.s_form.select_shop}}
+                           
+
+                        <div class="shop-preview-box" id="shopPreview">
+                            <div class="shop-preview-icon"><i class="fas fa-store"></i></div>
+                            <div>
+                                <div class="shop-preview-name" id="shopPreviewName"></div>
+                                <div class="shop-preview-addr" id="shopPreviewAddr"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-row">
+                        <button class="btn-primary" id="shopSaveBtn" type="submit"><i
+                                class="fas fa-check" style="font-size:.78rem;margin-right:5px;"></i> Confirm
+                            Shop</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

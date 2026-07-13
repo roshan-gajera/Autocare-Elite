@@ -1,0 +1,75 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content { animation:fadeIn .42s ease; }
+    .msg-subject { max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>
+
+<div class="page-content">
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon info"><i class="fas fa-inbox"></i></div>
+            <div class="stat-content"><h3>{{ services.total_message|default:"0" }}</h3><p>Total Messages</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="fas fa-envelope"></i></div>
+            <div class="stat-content"><h3>{{ services.not_read_message|default:"0" }}</h3><p>Unread</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="fas fa-envelope-open"></i></div>
+            <div class="stat-content"><h3>{{ services.read_message|default:"0" }}</h3><p>Read</p></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="fas fa-percent"></i></div>
+            <div class="stat-content"><h3>{{ services.read_percentage|default:"0" }}%</h3><p>Read Rate</p></div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3><i class="fas fa-inbox"></i> Customer Messages</h3>
+            <span class="badge badge-navy">{{ services.total_message|default:"0" }} Total</span>
+        </div>
+        <div class="card-body">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in services.messages %}
+                    <tr>
+                        <td><span class="order-id">#{{ message.id }}</span></td>
+                        <td style="color:var(--text-1);font-weight:600;">{{ message.name }}</td>
+                        <td style="font-family:var(--font-mono);font-size:12px;">{{ message.email }}</td>
+                        <td class="msg-subject" title="{{ message.subject }}">{{ message.subject }}</td>
+                        <td style="font-family:var(--font-mono);font-size:12px;white-space:nowrap;">{{ message.created_at|date:"d M Y" }}</td>
+                        <td>
+                            {% if message.is_read == False %}
+                            <span class="status-badge status-pending">Unread</span>
+                            {% else %}
+                            <span class="status-badge status-completed">Read</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:7px;">
+                                <a href="{% url 'servicesite-message-show' message.id %}" class="btn btn-sm" style="background:var(--blue-bg);color:var(--blue);border:1px solid #bfdbfe;" title="View"><i class="fas fa-eye"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

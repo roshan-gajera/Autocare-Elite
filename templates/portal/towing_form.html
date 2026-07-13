@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Form field styling ── */
+    .tf-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .tf-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .tf-form-group input,
+    .tf-form-group select,
+    .tf-form-group textarea {
+        width: 100%;
+        background: var(--bg-main);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.87rem;
+        color: var(--text-heading);
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .tf-form-group input:focus,
+    .tf-form-group select:focus,
+    .tf-form-group textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .tf-form-group input::placeholder,
+    .tf-form-group textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+
+    .tf-form-group select option {
+        background: var(--bg-card);
+        color: var(--text-heading);
+    }
+
+    .tf-form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .tf-error {
+        font-size: 0.78rem;
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.15rem;
+    }
+
+    /* ── Action buttons ── */
+    .bd-action-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1rem;
+        font-size: 0.87rem;
+        font-weight: 700;
+        border-radius: 11px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    }
+
+    .bd-action-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.92;
+    }
+
+    @media (max-width: 560px) {
+        .tf-btn-row { flex-direction: column !important; }
+        .bd-action-btn { flex: unset; width: 100%; }
+    }
+</style>
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; animation: fadeSlideUp 0.35s ease both;">
+    <div>
+        <p style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.3rem;">
+            <i class="fas fa-truck" style="margin-right: 0.3rem;"></i>Towing Service
+        </p>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin: 0;">{{ title }}</h1>
+    </div>
+    <a href="{% url 'towing_detail' towing.id %}"
+       style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+        <i class="fas fa-arrow-left"></i> Cancel
+    </a>
+</div>
+
+<!-- Form Card -->
+<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.05s;">
+
+    <!-- Card top bar -->
+    <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border);">
+        <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0;">
+            <i class="fas fa-edit" style="margin-right: 0.4rem; color: var(--accent);"></i>Fill in the details below
+        </p>
+    </div>
+
+    <!-- Form body -->
+    <div style="padding: 1.75rem;">
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="display: grid; gap: 1.25rem;">
+                {% for field in form %}
+                <div class="tf-form-group">
+                    <label class="tf-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="tf-error">
+                        <i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Action buttons -->
+            <div class="tf-btn-row" style="display: flex; gap: 0.75rem; margin-top: 2rem;">
+                <button type="submit" class="bd-action-btn"
+                        style="background: var(--accent); color: white; box-shadow: 0 4px 14px rgba(37,99,235,0.25);">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="{% url 'towing_detail' towing.id %}" class="bd-action-btn"
+                   style="background: #fff1f2; color: var(--danger); border: 1.5px solid #fecaca;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

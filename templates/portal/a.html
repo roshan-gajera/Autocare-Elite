@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+  .catalog-hero {
+    text-align: center;
+    margin-bottom: 5rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+
+  .catalog-hero::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    z-index: -1;
+  }
+
+  .page-title {
+    font-size: 3.5rem;
+    color: var(--text-heading);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #0f172a, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: #64748b;
+    line-height: 1.7;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .service-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 24px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    border-color: #93c5fd;
+  }
+
+  .service-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle top right, rgba(59, 130, 246, 0.1), transparent);
+    border-radius: 0 24px 0 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .service-card:hover::after {
+    opacity: 1;
+  }
+
+  .icon-box {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .service-card:hover .icon-box {
+    transform: scale(1.1) rotate(-5deg);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+  }
+
+  .service-title {
+    font-size: 1.5rem;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .service-desc {
+    color: #475569;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+
+  .price-row {
+    padding-top: 1.5rem;
+    border-top: 1px dashed #cbd5e1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .price-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .price-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .btn-book {
+    background: #f1f5f9;
+    color: #2563eb;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .service-card:hover .btn-book {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  }
+
+  .consultation-cta {
+    margin-top: 8rem;
+    padding: 6rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-radius: 32px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .consultation-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    opacity: 0.1;
+    pointer-events: none;
+  }
+
+  .cta-content {
+    max-width: 600px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cta-image {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    object-fit: cover;
+    opacity: 0.7;
+    mask-image: linear-gradient(to right, transparent, black);
+    -webkit-mask-image: linear-gradient(to right, transparent, black);
+  }
+
+  @media (max-width: 900px) {
+    .cta-image {
+      display: none;
+    }
+
+    .cta-content {
+      max-width: 100%;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .consultation-cta {
+      padding: 4rem 2rem;
+    }
+  }
+
+  /* ── Shop selector ── */
+  .shop-selector-wrapper {
+    max-width: 700px;
+    margin: 0 auto 4rem;
+  }
+
+  .shop-selector-form {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .shop-selector-inner {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .shop-selector-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+  }
+
+  .shop-list {
+    width: 100%;
+    padding: 12px 42px 12px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #0f172a;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .shop-list:hover {
+    border-color: #93c5fd;
+  }
+
+  .shop-list:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  }
+
+  .shop-select-btn {
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .shop-select-btn:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .shop-select-btn:active {
+    transform: scale(0.97) translateY(0);
+  }
+
+  /* Services section hidden by default, shown after selection */
+  .services-section {
+    display: none;
+  }
+
+  .services-section.visible {
+    display: block;
+    animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Selected shop badge */
+  .selected-shop-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.45rem 1rem;
+    background: rgba(37, 99, 235, 0.08);
+    color: #2563eb;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+  }
+</style>
+
+<div class="shop-selector-wrapper">
+  <form method="post" class="shop-selector-form">
+    {% csrf_token %}
+    <div class="shop-selector-inner">
+      <label class="shop-selector-label" for="shop_id">Select a Shop</label>
+      <select name="shop_id" id="shop_id" class="shop-list">
+        <option value="">— Choose your nearest shop —</option>
+        {% for shop in services.shops %}
+        <option value="{{shop.id}}">{{ shop.shop_name }} — {{ shop.get_city_display }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="shop-select-btn">
+      View Services
+    </button>
+  </form>
+</div>
+
+<hr>
+<hr>
+
+{% if services.select_service %}
+<div class="services-grid">
+
+  {% for select in services.select_service %}
+  <div class="service-card">
+    <div>
+      <div class="icon-box">
+        <i class="{{ select.icon_class }}"></i>
+      </div>
+      <h3 class="service-title">{{ select.title }}</h3>
+      <p class="service-desc">{{ select.description }}</p>
+    </div>
+    <div class="price-row">
+      <div style="display: flex; flex-direction: column;">
+        <span class="price-label">Starting at</span>
+        <span class="price-value">₹{{ select.price_starts_at }}</span>
+      </div>
+      <a href="{% url 'book_service' select.id %}" class="btn-book">Book Now</a>
+    </div>
+  </div>
+  {%endfor  %}
+</div>
+{% endif %}
+  {% endblock %}

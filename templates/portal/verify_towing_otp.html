@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify OTP | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-ring {
+        0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
+        70%  { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* ── OTP input ── */
+    .otp-input {
+        width: 100%;
+        background: var(--bg-main);
+        border: 2px solid var(--border);
+        border-radius: 14px;
+        padding: 1rem;
+        font-size: 1.7rem;
+        font-weight: 700;
+        letter-spacing: 0.6rem;
+        text-align: center;
+        color: var(--text-heading);
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    
+    .otp-input:focus {
+        border-color: var(--success);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+    }
+
+    .otp-input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.5;
+        letter-spacing: 0.3rem;
+        font-size: 1.2rem;
+    }
+
+    /* ── Label ── */
+    .tf-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    /* ── Action buttons ── */
+    .bd-action-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1rem;
+        font-size: 0.87rem;
+        font-weight: 700;
+        border-radius: 11px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+    }
+
+    .bd-action-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.92;
+    }
+</style>
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; animation: fadeSlideUp 0.35s ease both;">
+    <div>
+        <p style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.3rem;">
+            <i class="fas fa-truck" style="margin-right: 0.3rem;"></i>Towing Service
+        </p>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin: 0;">Verify OTP</h1>
+    </div>
+    <a href="{% url 'towing_detail' towing.id %}"
+       style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+        <i class="fas fa-arrow-left"></i> Back to Details
+    </a>
+</div>
+
+<!-- Main Card -->
+<div style="max-width: 500px; margin: 0 auto;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.05s;">
+
+        <!-- Shield icon header -->
+        <div style="padding: 2rem 1.75rem 1.5rem; border-bottom: 1px solid var(--border); text-align: center;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #ecfdf5; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: pulse-ring 2s ease-out infinite;">
+                <i class="fas fa-shield-alt" style="font-size: 1.6rem; color: var(--success);"></i>
+            </div>
+            <p style="font-size: 0.87rem; color: var(--text-muted); margin: 0; line-height: 1.6;">
+                Enter the OTP provided by the driver to complete the towing service.
+            </p>
+        </div>
+
+        <!-- Request summary -->
+        <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border); background: var(--bg-main); animation: fadeSlideUp 0.4s ease both; animation-delay: 0.1s;">
+            <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem;">Request Summary</p>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.87rem; color: var(--text-body);">
+                    <i class="fas fa-truck" style="color: var(--accent); font-size: 0.8rem; flex-shrink: 0;"></i>
+                    <strong style="color: var(--text-heading); font-weight: 600; min-width: 70px;">Vehicle</strong>
+                    <span>{{ towing.vehicle_details }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.87rem; color: var(--text-body);">
+                    <i class="fas fa-user-circle" style="color: var(--accent); font-size: 0.8rem; flex-shrink: 0;"></i>
+                    <strong style="color: var(--text-heading); font-weight: 600; min-width: 70px;">Customer</strong>
+                    <span>{{ towing.full_name }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.87rem; color: var(--text-body);">
+                    <i class="fas fa-tasks" style="color: var(--accent); font-size: 0.8rem; flex-shrink: 0;"></i>
+                    <strong style="color: var(--text-heading); font-weight: 600; min-width: 70px;">Status</strong>
+                    <span>{{ towing.get_status_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- OTP form -->
+        <div style="padding: 1.75rem; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.15s;">
+            <form method="post">
+                {% csrf_token %}
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label class="tf-label">
+                        <i class="fas fa-key"></i> Enter OTP
+                    </label>
+                    <input type="text" name="otp" class="otp-input"
+                           placeholder="······" maxlength="6" required autofocus>
+                </div>
+
+                <button type="submit" class="bd-action-btn"
+                        style="background: var(--success); color: white; box-shadow: 0 4px 14px rgba(16,185,129,0.28);">
+                    <i class="fas fa-check-circle"></i> Verify OTP
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

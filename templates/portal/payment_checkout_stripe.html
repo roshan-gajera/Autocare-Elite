@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}💳 Secure Payment Checkout | AutoCare Elite{% endblock %}
+
+{% block content %}
+<style>
+    .payment-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        border-radius: 24px;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: -4rem;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .glass-payment-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 24px;
+        padding: 4rem;
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 10;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .stripe-wrapper {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-pay {
+        background: #635bff;
+        color: white;
+        border: none;
+        padding: 1.25rem;
+        font-size: 1.15rem;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+    }
+
+    .btn-pay:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 25px -5px rgba(99, 91, 255, 0.3);
+        background: #544ada;
+    }
+
+    .btn-pay:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+    }
+
+    .loader {
+        border: 3px solid rgba(255,255,255,0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: none;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="animate-fade" style="padding: 0 1rem;">
+    <div class="payment-hero">
+        <span style="display: inline-flex; align-items: center; background: rgba(99, 91, 255, 0.2); color: #c4b5fd; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
+            <i class="fab fa-stripe-s" style="margin-right: 0.5rem;"></i> Secured Checkout
+        </span>
+        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px;">Complete Your Payment</h1>
+        <p style="font-size: 1.1rem; color: rgba(255,255,255,0.8); max-width: 500px; margin: 0 auto;">Enter your card details safely below to guarantee your appointment. A confirmation WhatsApp will be sent upon success.</p>
+    </div>
+
+    <div class="glass-payment-card">
+        <div style="background: #eff6ff; border-radius: 16px; padding: 1.5rem; margin-bottom: 2.5rem; border: 1px solid #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <p style="font-size: 0.85rem; color: #1e3a8a; font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem;">Booking Invoice</p>
+                <p style="font-size: 1.25rem; font-weight: 800; color: #1e40af; margin: 0;">#{{ booking.id }}</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 0.85rem; color: #1e3a8a; font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem;">Total Payable</p>
+                <p style="font-size: 1.75rem; font-weight: 800; color: #1e40af; margin: 0;">₹{{ amount_display }}</p>
+            </div>
+        </div>
+
+        <!-- Stripe Form Flow -->
+        <form id="payment-form" method="post">
+            {% csrf_token %}
+            <div class="stripe-wrapper">
+                <div id="payment-element">
+                    <!-- Stripe Elements will drop the Card inputs here -->
+                </div>
+            </div>
+
+            <div id="error-message" style="color: #dc2626; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600; text-align: center;"></div>
+
+            <button id="submit" class="btn-pay" type="submit">
+                <span id="button-text">Pay ₹{{ amount_display }} Securely</span>
+                <div class="loader" id="spinner"></div>
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #94a3b8; font-size: 0.85rem; font-weight: 600;">
+            <i class="fas fa-lock"></i> Payments are 256-bit encrypted and safely processed by Stripe.
+        </div>
+        
+        <!-- Hidden Verified Submission Form to ping backend -->
+        <form name="backend_verify_form" action="{% url 'payment_verify' %}" method="POST" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="payment_intent_id" id="payment_intent_id">
+        </form>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const options = {
+      clientSecret: '{{ client_secret }}',
+      appearance: {
+          theme: 'stripe',
+          variables: {
+              colorPrimary: '#635bff',
+              colorBackground: '#ffffff',
+              colorText: '#0f172a',
+              colorDanger: '#dc2626',
+              fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif',
+              spacingUnit: '4px',
+              borderRadius: '8px',
+          }
+      },
+    };
+
+    const elements = stripe.elements();
+    
+    // Create the Card Element and style it
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                color: '#0f172a',
+                fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#94a3b8'
+                }
+            },
+            invalid: {
+                color: '#dc2626',
+                iconColor: '#dc2626'
+            }
+        },
+        hidePostalCode: true
+    });
+    
+    // Mount to the DOM
+    cardElement.mount('#payment-element');
+
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submit');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('button-text');
+    
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        // Lock UI during process
+        submitBtn.disabled = true;
+        buttonText.style.display = 'none';
+        spinner.style.display = 'block';
+
+        // Confirm Card Payment
+        const {error, paymentIntent} = await stripe.confirmCardPayment('{{ client_secret }}', {
+            payment_method: {
+                card: cardElement,
+            }
+        });
+
+        if (error) {
+            const messageContainer = document.querySelector('#error-message');
+            messageContainer.textContent = error.message;
+            
+            // Re-enable UI on failure
+            submitBtn.disabled = false;
+            buttonText.style.display = 'block';
+            spinner.style.display = 'none';
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+            // Success! Send token to backend view to unlock the invoice
+            document.getElementById('payment_intent_id').value = paymentIntent.id;
+            document.backend_verify_form.submit();
+        } else {
+             const messageContainer = document.querySelector('#error-message');
+            messageContainer.textContent = "Payment interrupted or held. Please try again.";
+            
+            submitBtn.disabled = false;
+            buttonText.style.display = 'block';
+            spinner.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

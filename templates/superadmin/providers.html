@@ -1,0 +1,63 @@
+{% extends 'superadmin/dashboard.html' %}
+
+{% block content %}
+
+
+
+<div class="main">
+  <header class="topbar">
+
+    <div>
+      <div class="tb-title">All Providers</div>
+      <div class="tb-bread"><span>Admin</span><span class="sep">/</span><span class="cur">All Providers</span></div>
+    </div>
+
+  </header>
+
+  <div class="page fade-up">
+    <div class="ph">
+      <div>
+        <h1>Service Providers</h1>
+        <p>View and manage all registered service providers.</p>
+      </div>
+      
+    </div>
+
+    <!-- Cards -->
+    <div class="prov-grid">
+
+      {% for provider in provider.all_provider %}
+      <div class="prov-card">
+        <div class="prov-head">
+          <div class="prov-av">{{provider.shop_name|slice:":2"|upper}}</div>
+          <div>
+            <div class="prov-name">{{provider.shop_name|title}}</div>
+            <div class="prov-email">{{provider.user.email}}</div>
+          </div>
+        </div>
+        <div class="prov-meta">
+          
+          <span class="badge b-blue">{{provider.city}}</span>
+      
+        </div>
+        <div class="prov-stats">
+          <div class="ps-item">
+            <div class="ps-key">Name</div>
+            <div class="ps-val">{{provider.full_name}}</div>
+          </div>
+          
+          <div class="ps-item">
+            <div class="ps-key">Phone Number</div>
+            <div class="ps-val">+91  {{provider.phone_number}}</div>
+            
+          </div>
+        </div>
+        <div class="prov-acts">
+              <a class="btn btn-danger btn-sm btn-icon" href="{% url 'admin-delete-provider' provider.user.id %}"><i class="fas fa-trash"></i></a>
+        </div>
+      </div> 
+      {% endfor %}     
+    </div>
+  </div>
+</div>
+{% endblock %}

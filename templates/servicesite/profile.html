@@ -1,0 +1,272 @@
+{% extends 'servicesite/index.html' %}
+{% block content %}
+<style>
+    .page-content {
+        animation: fadeIn .42s ease;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        align-items: start;
+    }
+
+    /* Styled select dropdown for service search */
+    .service-search-select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 11px 40px 11px 14px;
+        font-size: 14px;
+        color: var(--text-1);
+        width: 100%;
+        cursor: pointer;
+        transition: var(--trans);
+        font-family: var(--font);
+        font-weight: 500;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e85d26' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        box-shadow: var(--shadow);
+    }
+
+    .service-search-select:focus {
+        border-color: var(--coral);
+        box-shadow: 0 0 0 3px rgba(232, 93, 38, .12);
+        outline: none;
+        background-color: #fff;
+    }
+
+    .service-search-select option {
+        padding: 10px 14px;
+        font-size: 14px;
+        background: #fff;
+        color: var(--text-1);
+    }
+
+    .service-search-select option:checked,
+    .service-search-select option:hover {
+        background: var(--coral-light);
+        color: var(--coral-dim);
+    }
+
+    /* Service detail card */
+    .service-detail {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-top: 18px;
+    }
+
+    .service-detail-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .service-detail-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .service-detail-title i {
+        color: var(--coral);
+    }
+
+    .svc-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .svc-meta-item label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-3);
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .svc-meta-item span {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-1);
+    }
+
+    .svc-desc label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-3);
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .svc-desc p {
+        font-size: 13px;
+        color: var(--text-2);
+        line-height: 1.65;
+    }
+
+    .service-actions {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 9px;
+        justify-content: flex-end;
+    }
+    
+
+    @media (max-width:900px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="page-content">
+    <div class="profile-grid">
+
+        <!-- Admin Profile -->
+        <div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-user-circle"></i> Admin Profile  (Add Details)</h2>
+                    {% if user.is_staff %}
+                    <span class="badge badge-warning"><i class="fas fa-shield-halved"></i> Admin</span>
+                    {% endif %}
+                </div>
+            
+                <div class="panel-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="adminProfile">
+
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> {{services.p_form.full_name.label}}</label>
+                            {{services.p_form.full_name}}
+
+                        </div>
+                         <div class="form-group">
+                            <label><i class="fas fa-shop"></i> {{services.p_form.shop_name.label}}</label>
+                             {{services.p_form.shop_name}}
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> {{services.p_form.phone_number.label}} (+91)</label>
+                             {{services.p_form.phone_number}}
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-location-dot"></i> {{services.p_form.city.label}}</label>
+                            {{services.p_form.city}}
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-location-dot"></i> {{services.p_form.shop_address.label}}</label>
+                            {{services.p_form.shop_address}}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%;">
+                            <i class="fas fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Management -->
+        <div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-sliders"></i> Service Management</h2>
+                    <a href="{% url 'servicesite-service-add' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Service
+                    </a>
+                </div>
+                <div class="panel-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="select_service">
+
+                        <div style="display:flex;gap:9px;align-items:center;">
+                            <div style="flex:1;position:relative;">
+                                <select name="service_id" class="service-search-select">
+                                    <option value="">— Select a service to view —</option>
+                                    {% for service in services.serviceOffer %}
+                                    <option value="{{ service.id }}">{{ service.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-navy" style="white-space:nowrap;flex-shrink:0;">
+                                <i class="fas fa-search"></i> Find
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if services.select_service %}
+                    <div class="service-detail">
+                        <div class="service-detail-top">
+                            <div class="service-detail-title">
+                                <i class="{{ services.select_service.icon_class }}"></i>
+                                {{ services.select_service.title }}
+                            </div>
+                            <span
+                                class="status-badge {% if services.select_service.is_active %}status-completed{% else %}status-cancelled{% endif %}">
+                                {{ services.select_service.is_active|yesno:"Active,Inactive" }}
+                            </span>
+                        </div>
+
+                        <div class="svc-meta-grid">
+                            <div class="svc-meta-item">
+                                <label>Starting Price</label>
+                                <span style="color:var(--green);font-family:var(--font-mono);">₹{{services.select_service.price_starts_at }}</span>
+                            </div>
+                            <div class="svc-meta-item">
+                                <label>Icon Class</label>
+                                <span style="font-family:var(--font-mono);font-size:12px;">{{services.select_service.icon_class }}</span>
+                            </div>
+                        </div>
+
+                        <div class="svc-desc">
+                            <label>Description</label>
+                            <p>{{ services.select_service.description }}</p>
+                        </div>
+
+                        <div class="service-actions">
+                            <a href="{% url 'servicesite-service-edit' services.select_service.id %}"
+                                class="btn btn-secondary btn-sm">
+                                <i class="fas fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'servicesite-service-delete' services.select_service.id %}"
+                                class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

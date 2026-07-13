@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | AutoCare Elite{% endblock %}
+
+{% block content %}
+
+<style>
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Field label */
+    .bf-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text-muted);
+        margin-bottom: 0.45rem;
+    }
+
+    /* Override Django-rendered inputs to match dashboard style */
+    .bf-form input[type="text"],
+    .bf-form input[type="email"],
+    .bf-form input[type="tel"],
+    .bf-form input[type="number"],
+    .bf-form input[type="date"],
+    .bf-form input[type="time"],
+    .bf-form select,
+    .bf-form textarea {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 11px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: var(--text-heading);
+        background: var(--bg-main);
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .bf-form input:focus,
+    .bf-form select:focus,
+    .bf-form textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: var(--bg-card);
+    }
+
+    .bf-form textarea {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.6;
+    }
+
+    /* ── Service checkbox 4-column card grid ── */
+    .sc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.9rem;
+    }
+
+    /* Each card is a <label> wrapping a hidden checkbox + text */
+    .sc-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1.1rem;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-card);
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-body);
+        box-shadow: var(--shadow);
+        transition: border-color 0.18s, background 0.18s, color 0.18s,
+                    box-shadow 0.18s, transform 0.18s;
+        user-select: none;
+        line-height: 1.3;
+    }
+
+    .sc-card:hover {
+        border-color: var(--accent);
+        background: #eff6ff;
+        color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(37,99,235,0.13);
+    }
+
+    .sc-card.sc-checked {
+        border-color: var(--accent);
+        background: #eff6ff;
+        color: var(--accent);
+        box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+    }
+
+    /* Custom checkbox box */
+    .sc-box {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-radius: 5px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: border-color 0.18s, background 0.18s;
+    }
+
+    .sc-card:hover .sc-box {
+        border-color: var(--accent);
+    }
+
+    .sc-card.sc-checked .sc-box {
+        border-color: var(--accent);
+        background: var(--accent);
+    }
+
+    .sc-box-tick {
+        display: none;
+        color: white;
+        font-size: 0.6rem;
+    }
+
+    .sc-card.sc-checked .sc-box-tick {
+        display: block;
+    }
+
+    /* Hide native input */
+    .sc-card input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    @media (max-width: 860px) { .sc-grid { grid-template-columns: 1fr 1fr 1fr; } }
+    @media (max-width: 560px) { .sc-grid { grid-template-columns: 1fr 1fr; } }
+
+    /* Error message */
+    .bf-error {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        color: var(--danger);
+        margin-top: 0.4rem;
+    }
+
+    /* Divider */
+    .bf-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0.5rem 0;
+    }
+
+    @media (max-width: 640px) {
+        .bf-two-col { grid-template-columns: 1fr !important; }
+    }
+</style>
+
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; animation: fadeSlideUp 0.35s ease both;">
+    <div>
+        <p style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.3rem;">
+            <i class="fas fa-edit" style="margin-right: 0.3rem;"></i>Service Order
+        </p>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin: 0;">{{ title }}</h1>
+    </div>
+    <a href="{% url 'booking_detail' booking.id %}"
+       style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 700; border-radius: 11px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+        <i class="fas fa-arrow-left"></i> Back to Details
+    </a>
+</div>
+
+<!-- Form card -->
+<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; animation: fadeSlideUp 0.4s ease both; animation-delay: 0.05s;">
+
+    <!-- Card header bar -->
+    <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="fas fa-clipboard-list" style="color: var(--accent); font-size: 0.9rem;"></i>
+        </div>
+        <div>
+            <p style="font-size: 0.9rem; font-weight: 700; color: var(--text-heading); margin: 0;">Booking Information</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Fill in all required fields below</p>
+        </div>
+    </div>
+
+    <!-- Form body -->
+    <form method="post" class="bf-form" style="padding: 1.75rem;">
+        {% csrf_token %}
+
+        <div style="display: flex; flex-direction: column; gap: 0;">
+            
+            {% for field in form %}
+
+            
+            {% if field.name == 'services' %}
+            <div style="margin-bottom: 1.4rem;">
+                
+                <label class="bf-label">
+                    <i class="fas fa-wrench" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                    {{ field.label }}
+                </label>
+                
+                <div class="sc-grid" id="sc-grid">
+                    {% for f in field %}
+                    <label class="sc-card{% if f.data.selected %} sc-checked{% endif %}">
+                        {{ f.tag }}
+                        <span class="sc-box"><i class="fas fa-check sc-box-tick"></i></span>
+                        <span>{{ f.choice_label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <script>
+                (function(){
+                    function init() {
+                        document.querySelectorAll('#sc-grid .sc-card').forEach(function(card) {
+                            var cb = card.querySelector('input[type="checkbox"]');
+                            if (!cb) return;
+                            // Sync initial checked state
+                            if (cb.checked) card.classList.add('sc-checked');
+                            card.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                cb.checked = !cb.checked;
+                                card.classList.toggle('sc-checked', cb.checked);
+                            });
+                        });
+                    }
+                    document.readyState === 'loading'
+                        ? document.addEventListener('DOMContentLoaded', init)
+                        : init();
+                })();
+                </script>
+               
+                {% if field.errors %}
+                <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                {% endif %}
+                
+            </div>
+
+            {# ── Date + Time: side by side ── #}
+            {% elif field.name == 'preferred_date' %}
+            <div class="bf-two-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.4rem;">
+                <div>
+                    <label class="bf-label">
+                        <i class="fas fa-calendar-alt" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                {# Time field rendered inside the same row — skipped individually below #}
+
+            {% elif field.name == 'preferred_time' %}
+                <div>
+                    <label class="bf-label">
+                        <i class="fas fa-clock" style="color: var(--success); margin-right: 0.3rem;"></i>
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# ── Customer name + phone side by side ── #}
+            {% elif field.name == 'customer_name' %}
+            <div class="bf-two-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.4rem;">
+                <div>
+                    <label class="bf-label">
+                        <i class="fas fa-user" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+            {% elif field.name == 'customer_phone' %}
+                <div>
+                    <label class="bf-label">
+                        <i class="fas fa-phone" style="color: var(--success); margin-right: 0.3rem;"></i>
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# ── All other fields: full width ── #}
+            {% else %}
+            <div style="margin-bottom: 1.4rem;">
+                <label class="bf-label">
+                    {% if field.name == 'customer_email' %}
+                        <i class="fas fa-envelope" style="color: var(--warning); margin-right: 0.3rem;"></i>
+                    {% elif field.name == 'vehicle_info' %}
+                        <i class="fas fa-car" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                    {% elif field.name == 'additional_notes' %}
+                        <i class="fas fa-sticky-note" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                    {% else %}
+                        <i class="fas fa-tag" style="color: var(--accent); margin-right: 0.3rem;"></i>
+                    {% endif %}
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="bf-error"><i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Divider -->
+        <div class="bf-divider" style="margin: 0.5rem 0 1.5rem;"></div>
+
+        <!-- Action buttons -->
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+            <button type="submit"
+                    style="flex: 1; min-width: 140px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.82rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; background: var(--accent); color: white; box-shadow: 0 4px 14px rgba(37,99,235,0.25); transition: transform 0.18s, box-shadow 0.18s;"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(37,99,235,0.35)'"
+                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 14px rgba(37,99,235,0.25)'">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a href="{% url 'booking_detail' booking.id %}"
+               style="flex: 1; min-width: 140px; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.82rem 1.5rem; font-size: 0.9rem; font-weight: 700; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg-card); color: var(--text-heading); text-decoration: none; transition: border-color 0.18s, color 0.18s;"
+               onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)'"
+               onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-heading)'">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
